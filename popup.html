@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			body {
+				background: radial-gradient(#004cff, #05232d);
+				color: white;
+			}
+			#savedNicknames ol {
+				padding-inline-start: 16px;
+			}
+			.saved-nickname-slot {
+				padding: 4px;
+				margin: 2px;
+			}
+		</style>
+		<script src="jquery-3.5.1.min.js"></script>
+	</head>
+	<body>
+		<h3>Simple Dredark Tools</h3>
+		<fieldset id="savedNicknames">
+			<legend><strong>Saved Nicknames</strong></legend>
+			<ol>
+				<li><input class="saved-nickname-slot" data-slot="0" placeholder="Nickname..."></li>
+				<li><input class="saved-nickname-slot" data-slot="1" placeholder="Nickname..."></li>
+				<li><input class="saved-nickname-slot" data-slot="2" placeholder="Nickname..."></li>
+				<li><input class="saved-nickname-slot" data-slot="3" placeholder="Nickname..."></li>
+				<li><input class="saved-nickname-slot" data-slot="4" placeholder="Nickname..."></li>
+			</ol>
+		</fieldset>
+		<script src="popup.js"></script>
+	</body>
+</html>
