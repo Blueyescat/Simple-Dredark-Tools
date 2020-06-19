@@ -51,6 +51,7 @@ function addSavedNickElements() {
 function addElements() {
     addSavedNickElements();
 }
+addElements();
 
 // Sometimes Dredark resets the start menu, for example after killed the game
 $(document).mousemove(function() {
