@@ -5,10 +5,14 @@
   "author": "Blueyescat <blueyescat123@gmail.com>",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "options_page": "options.html",
+  "web_accessible_resources": [
+    "style.css"
+  ],
   "content_scripts": [
     {
       "matches": ["*://*.drednot.io/*"],
-      "js": ["jquery-3.5.1.min.js", "main.js"]
+      "js": ["jquery-3.5.1.min.js", "main.js"],
+      "css": ["style.css"]
     }
   ],
   "background": {

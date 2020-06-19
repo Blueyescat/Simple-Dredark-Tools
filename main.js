@@ -1,15 +1,21 @@
 'use strict';
 
 var startMenuInner, centerContainer, nameInput;
-
-function addElements() {
+function cacheMenuElements() {
     startMenuInner = $("#start-menu-inner");
     centerContainer = startMenuInner.find(".center-container-h").eq(0);
     nameInput = centerContainer.find("input[placeholder='Nickname']").eq(0);
+}
+cacheMenuElements();
 
-    /* Saved nick buttons */
+// Saved nick buttons
+function addSavedNickElements() {
+    cacheMenuElements();
     centerContainer.css("flex-wrap", "wrap");
-    var flexBreak = $("<div/>").css({"flex-basis": "100%", "height": "0"});
+    var flexBreak = $("<div/>",
+    {
+        class: "flex-break"
+    });
     centerContainer.append(flexBreak);
     var container = $("<div/>",
     {
@@ -19,7 +25,7 @@ function addElements() {
         var btn = $("<button/>",
         {
             text: parseInt(i) + 1,
-            click: function () { loadSavedNick(i); }
+            click: function() { loadSavedNick(i); }
         });
         btn.attr("data-slot", i);
         btn.mouseenter(function() {
@@ -36,21 +42,23 @@ function addElements() {
         });
         tooltip.attr("data-slot", i);
         tooltip.addClass("saved-nicks-tooltip");
-        tooltip.css({"background": "rgba(237, 237, 237, 0.9)", "color": "black",
-                "transform": "translate(-50%, 100%)", "font-weight": "bold"})
         btn.append(tooltip);
         container.append(btn);
     }
     centerContainer.append(container);
 }
-addElements();
+
+function addElements() {
+    addSavedNickElements();
+}
 
 // Sometimes Dredark resets the start menu, for example after killed the game
 $(document).mousemove(function() {
     if (!$("#savedNicks").length)
-        addElements();
+        addSavedNickElements();
 });
 
+/* Saved nick buttons */
 function inputNick(nick) {
     nameInput.val(nick);
     nameInput.get(0).dispatchEvent(new Event("input"));
@@ -62,3 +70,4 @@ function loadSavedNick(i) {
 			inputNick(response.nick);
 	});
 }
+/* Saved nick buttons end */
