@@ -5,11 +5,32 @@
 			body {
 				background: radial-gradient(#004cff, #05232d);
 				color: white;
+				font-family: "Segoe UI", Tahoma, sans-serif;
+				width: 290px;
 			}
-			#savedNicknames ol {
+			ol {
 				padding-inline-start: 16px;
 			}
 			.saved-nickname-slot {
+				width: 90%;
+				padding: 4px;
+				margin: 2px;
+			}
+
+			#savedOutfits select {
+				width: fit-content;
+				padding: 4px;
+				margin: 2px;
+			}
+			#savedOutfits input[type="color"] {
+				width: 13px;
+				height: 8px;
+				visibility: hidden;
+			}
+			label {
+				background-color: black;
+				cursor: pointer;
+				border: 2px solid gray;
 				padding: 4px;
 				margin: 2px;
 			}
@@ -26,6 +47,21 @@
 				<li><input class="saved-nickname-slot" data-slot="2" placeholder="Nickname..."></li>
 				<li><input class="saved-nickname-slot" data-slot="3" placeholder="Nickname..."></li>
 				<li><input class="saved-nickname-slot" data-slot="4" placeholder="Nickname..."></li>
+			</ol>
+		</fieldset>
+		<fieldset id="savedOutfits">
+			<legend><strong>Saved Outfits</strong></legend>
+			<ol>
+				<li class="saved-outfit-slot" data-slot="0">
+					<select class="hair-type" title="Hair type&#013;Default: Bald">
+						<option value="0">Bald</option>
+						<option value="1">Not Bald</option>
+					</select>
+					<label title="Hair color&#013;Default: #171717"><input class="hair-color" type="color" value="#111111"></label>
+					<label title="Skin color&#013;Default: #C99B86"><input class="skin-color" type="color" value="#c99b86"></label>
+					<label title="Body color&#013;Default: #47A53B"><input class="body-color" type="color" value="#47a53b"></label>
+					<label title="Legs color&#013;Default: #154479"><input class="legs-color" type="color" value="#154479"></label>
+				</li>
 			</ol>
 		</fieldset>
 		<script src="popup.js"></script>

@@ -3,7 +3,7 @@
     height: 0;
 }
 
-.saved-nicks-tooltip {
+.sdt-tooltip {
     background: rgba(237, 237, 237, 0.9);
     color: black;
     transform: translate(-50%, 100%) !important;
