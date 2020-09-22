@@ -1,6 +1,6 @@
 {
   "name": "Simple Dredark Tools (drednot.io)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A simple extension for some tools on Dredark (drednot.io)",
   "author": "Blueyescat <blueyescat123@gmail.com>",
   "permissions": ["activeTab", "declarativeContent", "storage"],
