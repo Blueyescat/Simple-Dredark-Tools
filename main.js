@@ -49,8 +49,11 @@ function addSavedNickElements() {
         btn.mouseenter(function() {
             var button = $(this);
             chrome.runtime.sendMessage({message: "getSavedNick", index: button.data("slot")}, function(response) {
+                var tooltip = $("#savedNicks .sdt-tooltip[data-slot='" + button.data("slot") + "']");
                 if (typeof response.nick !== "undefined")
-                    $("#savedNicks .sdt-tooltip[data-slot='" + button.data("slot") + "']").text(response.nick);
+                    tooltip.text(response.nick);
+                else
+                    tooltip.text("");
             });
         });
         var tooltip = $("<div/>",
@@ -90,14 +93,17 @@ function addSavedOutfitElements() {
         btn.mouseenter(function() {
             var button = $(this);
             chrome.runtime.sendMessage({message: "getSavedOutfit", index: button.data("slot")}, function(response) {
+                var tooltip = $("#savedOutfits .sdt-tooltip[data-slot='" + button.data("slot") + "']");
                 if (typeof response.outfit !== "undefined") {
                     var data = response.outfit.split("||");
-                    var tooltip = (data[0] == 0 ? "Bald" : "Not Bald") + " - ";
-                    tooltip += "<span style='color:" + data[1] + "'>███</span> - ";
-                    tooltip += "<span style='color:" + data[2] + "'>███</span> - ";
-                    tooltip += "<span style='color:" + data[3] + "'>███</span> - ";
-                    tooltip += "<span style='color:" + data[4] + "'>███</span>";
-                    $("#savedOutfits .sdt-tooltip[data-slot='" + button.data("slot") + "']").html(tooltip);
+                    var text = (data[0] == 0 ? "Bald" : "Not Bald") + " - ";
+                    text += "<span style='color:" + data[1] + "'>███</span> - ";
+                    text += "<span style='color:" + data[2] + "'>███</span> - ";
+                    text += "<span style='color:" + data[3] + "'>███</span> - ";
+                    text += "<span style='color:" + data[4] + "'>███</span>";
+                    tooltip.html(text);
+                } else {
+                    tooltip.text("");
                 }
             });
         });
@@ -184,7 +190,9 @@ function inputOutfit(outfit) {
 function loadSavedOutfit(i) {
     chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
 		if (typeof response.outfit !== "undefined")
-			inputOutfit(response.outfit);
+            inputOutfit(response.outfit);
+        else
+            inputOutfit("0||#111111||#c99b86||#47a53b||#154479");
 	});
 }
 /* Saved outfit buttons end */

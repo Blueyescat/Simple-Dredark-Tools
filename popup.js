@@ -20,8 +20,22 @@ for (let i = 0; i < 5; i++) {
 	});
 }
 
-$(".saved-nickname-slot").on('input', function() {
+$(".saved-nickname-slot").on("input", function() {
 	chrome.runtime.sendMessage({message: "setSavedNick", index: $(this).data("slot"), nick: $(this).val()});
+});
+
+$(document).on("click", "#savedNicknames span.sdt-clear", function() {
+	$(".saved-nickname-slot[data-slot='" + $(this).data("slot") + "']").val("").trigger("input");
+});
+
+$(document).on("click", "#savedOutfits span.sdt-clear", function() {
+	var li = $(this).parent();
+	li.find(".hair-type").val(0);
+	li.find(".hair-color").val("#111111");
+	li.find(".skin-color").val("#c99b86");
+	li.find(".body-color").val("#47a53b");
+	li.find(".legs-color").val("#154479").change();
+	colorLabels();
 });
 
 function outfitChanged(slot) {
@@ -34,7 +48,7 @@ function outfitChanged(slot) {
 	chrome.runtime.sendMessage({message: "setSavedOutfit", index: slot, outfit: data});
 }
 
-$(".saved-outfit-slot select").on('change', function() {
+$(".saved-outfit-slot select").on("change", function() {
 	outfitChanged($(this).parent().data("slot"));
 });
 $(".saved-outfit-slot input").on("change", function() {
