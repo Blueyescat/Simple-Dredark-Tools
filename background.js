@@ -1,7 +1,19 @@
 "use strict";
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	if (request.message == "setSavedNick") {
+	if (request.message == "setLastSelectedTab") {
+		if (request.nick == "tab-1")
+			chrome.storage.sync.remove(["lastSelectedTab"]);
+		else
+			chrome.storage.sync.set({["lastSelectedTab"]: request.id});
+	} else if (request.message == "getLastSelectedTab") {
+		chrome.storage.sync.get("lastSelectedTab", function(data) {
+			sendResponse({id: data["lastSelectedTab"]});
+		});
+		return true;
+	}
+
+	else if (request.message == "setSavedNick") {
 		var key = "savedNick-" + request.index;
 		if (request.nick == "")
 			chrome.storage.sync.remove([key]);

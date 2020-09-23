@@ -94,17 +94,18 @@ function addSavedOutfitElements() {
             var button = $(this);
             chrome.runtime.sendMessage({message: "getSavedOutfit", index: button.data("slot")}, function(response) {
                 var tooltip = $("#savedOutfits .sdt-tooltip[data-slot='" + button.data("slot") + "']");
-                if (typeof response.outfit !== "undefined") {
-                    var data = response.outfit.split("||");
-                    var text = (data[0] == 0 ? "Bald" : "Not Bald") + " - ";
-                    text += "<span style='color:" + data[1] + "'>███</span> - ";
-                    text += "<span style='color:" + data[2] + "'>███</span> - ";
-                    text += "<span style='color:" + data[3] + "'>███</span> - ";
-                    text += "<span style='color:" + data[4] + "'>███</span>";
-                    tooltip.html(text);
-                } else {
-                    tooltip.text("");
-                }
+                var data;
+                if (typeof response.outfit !== "undefined")
+                    data = response.outfit;
+                else
+                    data = "0||#111111||#c99b86||#47a53b||#154479";
+                data = data.split("||");
+                var text = (data[0] == 0 ? "Bald" : "Not Bald") + " - ";
+                text += "<span style='color:" + data[1] + "'>███</span> - ";
+                text += "<span style='color:" + data[2] + "'>███</span> - ";
+                text += "<span style='color:" + data[3] + "'>███</span> - ";
+                text += "<span style='color:" + data[4] + "'>███</span>";
+                tooltip.html(text);
             });
         });
         var tooltip = $("<div/>",
