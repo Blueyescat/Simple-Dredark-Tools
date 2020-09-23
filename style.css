@@ -9,3 +9,9 @@
     transform: translate(-50%, 100%) !important;
     font-weight: bold;
 }
+
+#savedOutfits {
+    width: -moz-max-content;
+    width: -webkit-max-content;
+    margin: 0 auto;
+}

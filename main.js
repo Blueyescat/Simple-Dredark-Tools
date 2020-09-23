@@ -82,7 +82,7 @@ function addSavedOutfitElements() {
     var container = $("<div/>",
     {
         id: "savedOutfits"
-    }).css({"width": "fit-content", "margin": "0 auto"});
+    });
     for (let i = 0; i < 5; i++) {
         var btn = $("<button/>",
         {
