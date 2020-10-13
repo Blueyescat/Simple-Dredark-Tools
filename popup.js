@@ -142,3 +142,82 @@ function colorLabels() {
 		$(this).css("background-color", $(this).val());
 	});
 }
+
+/* auto setter start */
+// == main ==
+chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
+	$("#autoSetter .state").prop("checked", response.state);
+});
+chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
+	if (typeof response.code !== "undefined") {
+		$("#autoSetter .hotkey").val(unPascalCase(response.code));
+	}
+});
+
+$("#autoSetter .state").change(function() {
+    if (this.checked) {
+		chrome.runtime.sendMessage({message: "setAutoSetterState", state: true});
+		chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
+			if (typeof response.code === "undefined") {
+				var e = jQuery.Event("keyup");
+				e.code = "ShiftLeft";
+				e.key = "Shift";
+				e.keyCode = 16;
+				$("#autoSetter .hotkey").trigger(e);
+			}
+		});
+    } else {
+		chrome.runtime.sendMessage({message: "setAutoSetterState", state: false});
+    }
+});
+var lastKey;
+$("#autoSetter .hotkey").on("focus", function () {
+	lastKey = $(this).val();
+	$(this).val("< press a key >");
+});
+$("#autoSetter .hotkey").on("blur", function () {
+	if ($(this).val() == "< press a key >")
+		$(this).val(lastKey);
+});
+$("#autoSetter .hotkey").on("keyup", function (event) {
+	var code = getKeyCode(event);
+	$(this).val(unPascalCase(code)).blur();
+	chrome.runtime.sendMessage({message: "setAutoSetterHotkey", code: code});
+});
+
+// == properties ==
+const properties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
+for (const prop of properties){
+    chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
+		$("#autoSetter ." + prop).val(response.value).change();
+	});
+	$("#autoSetter ." + prop).change(function() {
+		var selectedOption = $(this).find("option:selected");
+		chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: selectedOption.val()});
+		$(this).attr("style", selectedOption.attr("style"));
+	});
+}
+// sign
+chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: "signText"}, function(response) {
+	if (response.value !== -1)
+		$("#autoSetter .signText").val(response.value);
+});
+$("#autoSetter .signText").on("input", function() {
+	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: "signText", value: $(this).val()});
+});
+
+function getKeyCode(event) {
+	var code;
+	if (event.code !== undefined && event.code != "")
+		code = event.code;
+	else if (event.key !== undefined)
+		code = event.key;
+	else if (event.keyCode !== undefined)
+		code = event.keyCode;
+	return code;
+}
+
+function unPascalCase(text) {
+	return text.replace(/([^[A-Z0-9]{2,})([A-Z0-9])/g, "$1 $2");
+}
+/* auto setter end */

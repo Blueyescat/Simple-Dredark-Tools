@@ -24,6 +24,7 @@
 				width: -webkit-max-content;
 				padding: 4px;
 				margin: 2px;
+				cursor: pointer;
 			}
 			.saved-outfit-slot input.color-input {
 				width: 16px;
@@ -85,18 +86,67 @@
 				padding: 5px 15px;
 				cursor: pointer;
 			}
-
 			ul.tabs li.current {
 				background: #ededed;
 				color: #222;
 			}
-
 			.tab-content {
 				display: none;
 			}
-
 			.tab-content.current {
 				display: inherit;
+			}
+			.hotkey {
+				pointer-events: none;
+			}
+			#autoSetter label {
+				line-height: 20px;
+				font-size: 105%;
+			}
+			#autoSetter input[type="checkbox"] {
+				width: 17px;
+				height: 17px;
+				vertical-align: middle;
+				margin-top: 0px;
+			}
+			#autoSetter select {
+				width: 100%;
+				margin-bottom: 5px;
+				cursor: pointer;
+			}
+			#autoSetter .signText {
+				width: 100%;
+				box-sizing: border-box;
+			}
+			#autoSetter .signText::placeholder {
+				font-style: italic;
+				background: lightgray;
+			}
+			.info span {
+				color: lightblue;
+				text-decoration: underline;
+				float: right;
+				cursor: help;
+				font-size: 105%;
+			}
+			.info .box {
+				visibility: hidden;
+				opacity: 0;
+				background-color: white;
+				box-shadow: 4px 4px 10px 0px rgba(0,0,0,0.75);
+				color: black;
+				font-size: 105%;
+				border-radius: 5px;
+				padding: 5px;
+				position: fixed;
+				margin-top: 20px;
+				margin-right: 20px;
+				transition: opacity 0.2s;
+				z-index: 1000;
+			}
+			.info:hover .box {
+				visibility: visible;
+				opacity: 1;
 			}
 			/* tabs end */
 		</style>
@@ -106,6 +156,7 @@
 		<ul class="tabs">
 			<li class="tab-link current" data-tab="tab-1">Nicks</li>
 			<li class="tab-link" data-tab="tab-2">Outfits</li>
+			<li class="tab-link" data-tab="tab-3">Auto Setter</li>
 		</ul>
 		<div id="tab-1" class="tab-content current">
 			<fieldset id="savedNicknames">
@@ -141,6 +192,98 @@
 					<br><br>
 				</div>
 			</fieldset>
+		</div><div id="tab-3" class="tab-content">
+			<fieldset id="autoSetter">
+				<legend><strong>Auto Setter</strong></legend>
+				<div class="info">
+					<span>How it works?</span>
+					<div class="box">
+						If this is enabled, while pressing the hotkey and clicking a block in game will change its properties as defined here.
+						Signs also support auto setting while placing them.
+						<br><br>
+						The auto setting can't work so fast, you shouldn't try
+						to click fast, holding down left-click also works. You can't smoothly move while setting blocks.
+					</div>
+				</div>
+				<label style="cursor: pointer;">Enabled: <input style="cursor: pointer;" class="state" type="checkbox"></label>
+				<br><label style="cursor: pointer;">Hotkey: <input class="hotkey" type="text" title="Hotkey to hold down for auto setting blocks" readonly></label>
+				<br><br>
+				<fieldset class="cargo-hatch">
+					<legend><strong>Cargo Hatches</strong></legend>
+					<label>
+						Mode
+						<select class="cargoHatchMode" title="Cargo hatch mode">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Allow All Items (Ignore Filter)</option>
+							<option value="1" style="background: rgb(255, 255, 136); color: black; font-style: normal;">Block Filter Only (Allow by Default)</option>
+							<option value="2" style="background: rgb(255, 204, 136); color: black; font-style: normal;">Allow Filter Only (Block by Default)</option>
+							<option value="3" style="background: rgb(255, 136, 136); color: black; font-style: normal;">Block All Items (Ignore Filter)</option>
+						</select>
+					</label>
+				</fieldset>
+				<fieldset class="loader">
+					<legend><strong>Loaders</strong></legend>
+					<label>
+						Mode
+						<select class="loaderMode" title="Loader mode">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Allow All Items (Ignore Filter)</option>
+							<option value="1" style="background: rgb(255, 255, 136); color: black; font-style: normal;">Block Filter Only (Allow by Default)</option>
+							<option value="2" style="background: rgb(255, 204, 136); color: black; font-style: normal;">Allow Filter Only (Block by Default)</option>
+							<option value="3" style="background: rgb(255, 136, 136); color: black; font-style: normal;">Block All Items (Ignore Filter)</option>
+						</select>
+					</label>
+					<label>
+						Output inventory requirement
+						<select class="loaderInvRequirement" title="Loader output inventory requirement">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: white; color: black; font-style: normal;">&#9744; Not Required</option>
+							<option value="1" style="background: white; color: black; font-style: normal;">&#9745; Required</option>
+						</select>
+					</label>
+				</fieldset>
+				<fieldset class="pusher">
+					<legend><strong>Pushers</strong></legend>
+					<label>
+						Primary mode
+						<select class="pusherPrimaryMode" style="background: rgb(204, 204, 204);">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Push</option>
+							<option value="1" style="background: rgb(255, 136, 255); color: black; font-style: normal;">Pull</option>
+							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Do Nothing</option>
+						</select>
+					</label>
+					<label>
+						Filtered mode
+						<select class="pusherFilteredMode" style="background: rgb(204, 204, 204);">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Push</option>
+							<option value="1" style="background: rgb(255, 136, 255); color: black; font-style: normal;">Pull</option>
+							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Do Nothing</option>
+						</select>
+					</label>
+				</fieldset>
+				<fieldset class="sign">
+					<legend><strong>Signs</strong></legend>
+					<label>
+						Text
+						<br><input class="signText" type="text" placeholder="Do Not Change" maxlength="32">
+					</label>
+				</fieldset>
+				<fieldset class="door-spawn_point">
+					<legend><strong>Doors and Spawn Points</strong></legend>
+					<label>
+						Restrict to
+						<select class="doorSpawnRestriction" style="background: rgb(204, 204, 204);">
+							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
+							<option value="0" style="background: rgb(136, 255, 255); color: black; font-style: normal;">Captains</option>
+							<option value="1" style="background: rgb(255, 255, 136); color: black; font-style: normal;">Crew</option>
+							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Guests</option>
+						</select>
+					</label>
+				</fieldset>
+			</fieldset>
+		</fieldset>
 		</div>
 		<script type="text/javascript" src="tui-color-picker.min.js"></script>
 		<link rel="stylesheet" href="tui-color-picker.min.css">

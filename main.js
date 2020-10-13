@@ -174,7 +174,6 @@ function inputColor(btn, color) {
 }
 
 function inputOutfit(outfit) {
-    console.log(outfit);
     var data = outfit.split("||");
     hairSelect.find("option").filter(function() {
         return $(this).text() == (data[0] == 0 ? "Bald" : "Not Bald");
@@ -197,3 +196,135 @@ function loadSavedOutfit(i) {
 	});
 }
 /* Saved outfit buttons end */
+
+/* auto setter start */
+var autoSetterEnabled, autoSetterHotkey, autoSetterHotkeyDown,
+    autoSetterProperties = {
+        cargoHatchMode: -1,
+        loaderMode: -1,
+        loaderInvRequirement: -1,
+        pusherPrimaryMode: -1,
+        pusherFilteredMode: -1,
+        signText: -1,
+        doorSpawnRestriction: -1
+    };
+
+// == main ==
+chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
+	autoSetterEnabled = response.state;
+});
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.message == "defineAutoSetterEnabled")
+        autoSetterEnabled = request.state;
+});
+
+chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
+	autoSetterHotkey = response.code;
+});
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.message == "defineAutoSetterHotkey")
+        autoSetterHotkey = request.code;
+});
+
+$(window).on("keydown keyup", function(event) {
+    if (autoSetterEnabled && (event.code == autoSetterHotkey || event.key == autoSetterHotkey || event.keyCode == autoSetterHotkey))
+        autoSetterHotkeyDown = event.type == "keydown";
+});
+
+// == properties ==
+Object.keys(autoSetterProperties).forEach(function(key) {
+    chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: key}, function(response) {
+        autoSetterProperties[key] = response.value;
+    });
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (var key in changes) {
+        if (namespace == "sync") {
+            if (key.startsWith("autoSetter-property-")){
+                var property = key.slice("autoSetter-property-".length);
+                // var oldValue = changes[key].oldValue;
+                var newValue = changes[key].newValue;
+                autoSetterProperties[property] = newValue;
+            }
+            
+        }
+    }
+});
+
+// gui listener
+var pui = $("#pui");
+var puiObserver = new MutationObserver(function(mutations) {
+    if (!autoSetterEnabled || !autoSetterHotkeyDown)
+        return;
+    if (!pui.is(":hidden")) {
+        var close;
+        if (pui.text().includes("Cargo Hatch")) {
+            if (autoSetterProperties.cargoHatchMode != -1) {
+                var select = pui.find("div select").eq(0);
+                select.val(autoSetterProperties.cargoHatchMode);
+                select[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+        } else if (pui.text().includes("Loader")) {
+            if (autoSetterProperties.loaderMode != -1) {
+                var select = pui.find("div select").eq(0);
+                select.val(autoSetterProperties.loaderMode);
+                select[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+            if (autoSetterProperties.loaderInvRequirement != -1) {
+                var checkbox = pui.find("div p label input[type='checkbox']").eq(0);
+                checkbox.prop("checked", autoSetterProperties.loaderInvRequirement == 1)
+                checkbox[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+        } else if (pui.text().includes("Pusher")) {
+            if (autoSetterProperties.pusherPrimaryMode != -1) {
+                var select = pui.find("div select").eq(0);
+                select.val(autoSetterProperties.pusherPrimaryMode);
+                select[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+            if (autoSetterProperties.pusherFilteredMode != -1) {
+                var select = pui.find("div select").eq(1);
+                select.val(autoSetterProperties.pusherFilteredMode);
+                select[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+        } else if (pui.text().includes("Sign")) {
+            if (autoSetterProperties.signText != -1) {
+                var input = pui.find("div input").eq(0);
+                input.val(autoSetterProperties.signText);
+                input[0].dispatchEvent(new Event("input"));
+                pui.find("div div button.btn-green").eq(0).click();
+            }
+        }
+        if (close)
+            pui.find("div.close button").click();
+    }
+});
+
+// tip list listener (context menu)
+var tipListObserver = new MutationObserver(function(mutations) {
+    if (!autoSetterEnabled || !autoSetterHotkeyDown)
+        return;
+    if ($(".tip-list").length) {
+        var tipList = $(".tip-list");
+        if (tipList.text().includes("Restrict to")) {
+            if (autoSetterProperties.doorSpawnRestriction != -1)
+                tipList.find("div").eq(autoSetterProperties.doorSpawnRestriction).click();
+        }
+    }
+});
+
+tipListObserver.observe(document, {
+    subtree: true,
+    childList: true
+});
+ 
+puiObserver.observe(pui[0], {
+    attributes: true,
+    attributeFilter: ["style"]
+});
+/* auto setter end */
