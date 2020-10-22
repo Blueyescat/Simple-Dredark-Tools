@@ -6,33 +6,33 @@
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "options_page": "options.html",
   "web_accessible_resources": [
-    "style.css"
+    "styles/content.css"
   ],
   "content_scripts": [
     {
       "matches": ["*://*.drednot.io/*", "*://*.drednot.net/*", "*://*.drednot.com/*"],
-      "js": ["jquery-3.5.1.min.js", "main.js"],
-      "css": ["style.css"]
+      "js": ["lib/jquery/jquery-3.5.1.min.js", "scripts/content.js"],
+      "css": ["styles/content.css"]
     }
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["scripts/background.js"],
     "persistent": false
   },
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/icon31.png",
-      "32": "images/icon31.png",
-      "48": "images/icon31.png",
-      "128": "images/icon31.png"
+      "16": "images/dredark-icon.png",
+      "32": "images/dredark-icon.png",
+      "48": "images/dredark-icon.png",
+      "128": "images/dredark-icon.png"
     }
   },
   "icons": {
-    "16": "images/icon31.png",
-    "32": "images/icon31.png",
-    "48": "images/icon31.png",
-    "128": "images/icon31.png"
+    "16": "images/dredark-icon.png",
+    "32": "images/dredark-icon.png",
+    "48": "images/dredark-icon.png",
+    "128": "images/dredark-icon.png"
   },
   "manifest_version": 2
 }
