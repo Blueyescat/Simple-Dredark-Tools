@@ -47,7 +47,8 @@
 		</div><div id="tab-3" class="tab-content">
 			<fieldset id="autoSetter">
 				<legend><strong>Auto Setter</strong></legend>
-				<div class="info">
+				<label>Enabled: <input id="autoSetterState" type="checkbox"></label>
+				<span class="info">
 					<span>How it works?</span>
 					<div class="box">
 						If this is enabled, while pressing the hotkey and clicking a block in game will change its properties as defined here.
@@ -56,8 +57,7 @@
 						The auto setting can't work so fast, you shouldn't try
 						to click fast, holding down left-click also works. You can't smoothly move while setting blocks.
 					</div>
-				</div>
-				<label style="cursor: pointer;">Enabled: <input style="cursor: pointer;" class="state" type="checkbox"></label>
+				</span>
 				<br><label style="cursor: pointer;">Hotkey: <input class="hotkey" type="text" title="Hotkey to hold down for auto setting blocks" readonly></label>
 				<br><br>
 				<fieldset class="cargo-hatch">
@@ -72,6 +72,18 @@
 							<option value="3" style="background: rgb(255, 136, 136); color: black; font-style: normal;">Block All Items (Ignore Filter)</option>
 						</select>
 					</label>
+					<div class="filters">
+						<span style="line-height: 20px; font-weight: bold;">Filters</span>
+						<br><label style="cursor: pointer;">Change: <input id="cargoHatchFiltersState" class="filters-state" type="checkbox"></label>
+						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
+						<div id="cargoHatchFiltersSettings" class="settings" style="display: none;">
+							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be a full item name.">
+								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+							</ol>
+						</div>
+					</div>
 				</fieldset>
 				<fieldset class="loader">
 					<legend><strong>Loaders</strong></legend>
@@ -93,6 +105,18 @@
 							<option value="1" style="background: white; color: black; font-style: normal;">&#9745; Required</option>
 						</select>
 					</label>
+					<div class="filters">
+						<span style="line-height: 20px; font-weight: bold;">Filters</span>
+						<br><label style="cursor: pointer;">Change: <input id="loaderFiltersState" class="filters-state" type="checkbox"></label>
+						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
+						<div id="loaderFiltersSettings" class="settings" style="display: none;">
+							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be a full item name.">
+								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+							</ol>
+						</div>
+					</div>
 				</fieldset>
 				<fieldset class="pusher">
 					<legend><strong>Pushers</strong></legend>
@@ -114,6 +138,18 @@
 							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Do Nothing</option>
 						</select>
 					</label>
+					<div class="filters">
+						<span style="line-height: 20px; font-weight: bold;">Filters</span>
+						<br><label style="cursor: pointer;">Change: <input id="pusherFiltersState" class="filters-state" type="checkbox"></label>
+						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
+						<div id="pusherFiltersSettings" class="settings" style="display: none;">
+							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be a full item name.">
+								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name" type="text" placeholder="No Item"></li>
+							</ol>
+						</div>
+					</div>
 				</fieldset>
 				<fieldset class="sign">
 					<legend><strong>Signs</strong></legend>

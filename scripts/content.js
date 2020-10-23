@@ -201,10 +201,16 @@ function loadSavedOutfit(i) {
 var autoSetterEnabled, autoSetterHotkey, autoSetterHotkeyDown,
     autoSetterProperties = {
         cargoHatchMode: -1,
+        cargoHatchFiltersState: -1,
+        cargoHatchFiltersSettings: -1,
         loaderMode: -1,
         loaderInvRequirement: -1,
+        loaderFiltersState: -1,
+        loaderFiltersSettings: -1,
         pusherPrimaryMode: -1,
         pusherFilteredMode: -1,
+        pusherFiltersState: -1,
+        pusherFiltersSettings: -1,
         signText: -1,
         doorSpawnRestriction: -1
     };
@@ -266,6 +272,30 @@ var puiObserver = new MutationObserver(function(mutations) {
                 select[0].dispatchEvent(new Event("change"));
                 close = true;
             }
+            if (autoSetterProperties.cargoHatchFiltersState != -1 && autoSetterProperties.cargoHatchFiltersSettings != -1) {
+                var settings = autoSetterProperties.cargoHatchFiltersSettings;
+                var inputs = pui.find("div div > input");
+                inputs.each(function (index) {
+                    if (settings[index].state == true) {
+                        var name = settings[index].name;
+                        if (name == "") name = "No Item";
+                        var input = $(this);
+                        input[0].dispatchEvent(new Event("focus"));
+                        setTimeout(() => {
+                            var itemPicker = $(this).parent().find(".item-picker");
+                            itemPicker.find("div span").each(function () {
+                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
+                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                                    input[0].dispatchEvent(new Event("blur"));
+                                    return false;
+                                }
+                            });
+                        }, 1);
+                    }
+                });
+                close = true;
+            }
         } else if (pui.text().includes("Loader")) {
             if (autoSetterProperties.loaderMode != -1) {
                 var select = pui.find("div select").eq(0);
@@ -279,6 +309,30 @@ var puiObserver = new MutationObserver(function(mutations) {
                 checkbox[0].dispatchEvent(new Event("change"));
                 close = true;
             }
+            if (autoSetterProperties.loaderFiltersState != -1 && autoSetterProperties.loaderFiltersSettings != -1) {
+                var settings = autoSetterProperties.loaderFiltersSettings;
+                var inputs = pui.find("div div > input");
+                inputs.each(function (index) {
+                    if (settings[index].state == true) {
+                        var name = settings[index].name;
+                        if (name == "") name = "No Item";
+                        var input = $(this);
+                        input[0].dispatchEvent(new Event("focus"));
+                        setTimeout(() => {
+                            var itemPicker = $(this).parent().find(".item-picker");
+                            itemPicker.find("div span").each(function () {
+                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
+                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                                    input[0].dispatchEvent(new Event("blur"));
+                                    return false;
+                                }
+                            });
+                        }, 1);
+                    }
+                });
+                close = true;
+            }
         } else if (pui.text().includes("Pusher")) {
             if (autoSetterProperties.pusherPrimaryMode != -1) {
                 var select = pui.find("div select").eq(0);
@@ -290,6 +344,30 @@ var puiObserver = new MutationObserver(function(mutations) {
                 var select = pui.find("div select").eq(1);
                 select.val(autoSetterProperties.pusherFilteredMode);
                 select[0].dispatchEvent(new Event("change"));
+                close = true;
+            }
+            if (autoSetterProperties.pusherFiltersState != -1 && autoSetterProperties.pusherFiltersSettings != -1) {
+                var settings = autoSetterProperties.pusherFiltersSettings;
+                var inputs = pui.find("div div > input");
+                inputs.each(function (index) {
+                    if (settings[index].state == true) {
+                        var name = settings[index].name;
+                        if (name == "") name = "No Item";
+                        var input = $(this);
+                        input[0].dispatchEvent(new Event("focus"));
+                        setTimeout(() => {
+                            var itemPicker = $(this).parent().find(".item-picker");
+                            itemPicker.find("div span").each(function () {
+                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
+                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                                    input[0].dispatchEvent(new Event("blur"));
+                                    return false;
+                                }
+                            });
+                        }, 1);
+                    }
+                });
                 close = true;
             }
         } else if (pui.text().includes("Sign")) {

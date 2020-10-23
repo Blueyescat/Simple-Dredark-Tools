@@ -69,7 +69,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		return true;
 	} else if (request.message == "setAutoSetterProperty") {
 		var key = "autoSetter-property-" + request.property;
-		if (typeof request.value === "undefined" || request.value === -1 || request.value == "")
+		if (typeof request.value === "undefined" || request.value === -1 || request.value == "" ||
+		(typeof request.value === "boolean" && request.value == false))
 			chrome.storage.sync.remove([key]);
 		else
 			chrome.storage.sync.set({[key]: request.value});

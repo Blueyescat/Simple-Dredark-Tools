@@ -146,7 +146,7 @@ function colorLabels() {
 /* auto setter start */
 // == main ==
 chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
-	$("#autoSetter .state").prop("checked", response.state);
+	$("#autoSetter #autoSetterState").prop("checked", response.state);
 });
 chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
 	if (typeof response.code !== "undefined") {
@@ -154,7 +154,7 @@ chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) 
 	}
 });
 
-$("#autoSetter .state").change(function() {
+$("#autoSetter #autoSetterState").change(function() {
     if (this.checked) {
 		chrome.runtime.sendMessage({message: "setAutoSetterState", state: true});
 		chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
@@ -186,8 +186,8 @@ $("#autoSetter .hotkey").on("keyup", function (event) {
 });
 
 // == properties ==
-const properties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
-for (const prop of properties){
+var properties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
+for (const prop of properties) {
     chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
 		$("#autoSetter ." + prop).val(response.value).change();
 	});
@@ -205,7 +205,68 @@ chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: "signTex
 $("#autoSetter .signText").on("input", function() {
 	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: "signText", value: $(this).val()});
 });
+// filters
+function settingsChanged(prop) {
+	var list = [];
+	$("#" + prop + " li").each(function (index) {
+		list[index] = {
+			state: $(this).find(".filter-state").prop("checked"),
+			name: $(this).find(".name").val()
+		};
+	});
+	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: list});
+}
+// dropdown
+$("#autoSetter .filters .edit-button").on("click", function () {
+	var button = $(this);
+	var settings = button.next(".settings");
+	settings.slideToggle(90, function () {
+		var arrow = button.find("i").eq(0);
+		if (settings.is(":hidden"))
+			arrow.removeClass("up").addClass("down");
+		else
+			arrow.removeClass("down").addClass("up");
+	});
+});
+var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];
+var propertiesSettings = ["cargoHatchFiltersSettings", "loaderFiltersSettings", "pusherFiltersSettings"];
+// show
+for (const [index, prop] of properties.entries()) {
+	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
+		$("#autoSetter .filters #" + prop).prop("checked", response.value == true);
+	});
+	$("#autoSetter .filters #" + prop).change(function() {
+		chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: this.checked});
+		if (this.checked) {
+			chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: propertiesSettings[index]}, function(response) {
+				if (response.value == -1) {
+					var list = [{state: true, name: ""}, {state: true, name: ""}, {state: true, name: ""}];
+					chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: propertiesSettings[index], value: list});
+				}
+			});
+		}
+	});
+}
+// save
+for (const prop of propertiesSettings) {
+	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
+		var list = response.value;
+		for (var index in list) {
+			var slot = $("#" + prop + " li[data-slot='" + index + "']");
+			slot.find(".filter-state").prop("checked", list[index].state);
+			slot.find(".name").val(list[index].name);
+		}
+	});
+	
+	$("#" + prop + " li .filter-state").change(function() {
+		settingsChanged(prop);
+	});
+	$("#" + prop + " li .name").on("input", function() {
+		settingsChanged(prop);
+	});
+}
 
+// utils
 function getKeyCode(event) {
 	var code;
 	if (event.code !== undefined && event.code != "")
