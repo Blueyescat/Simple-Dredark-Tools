@@ -6,6 +6,14 @@ body {
     width: 290px;
     user-select: none;
 }
+#optionsButton {
+    padding: 4px;
+    border-radius: 5px;
+    width: 20px;
+    float: right;
+    cursor: pointer;
+}
+#optionsButton:hover { background-color: rgba(255, 255, 255, 0.2); }
 ol { padding-inline-start: 16px; }
 .saved-nickname-slot {
     width: 86.5%;
@@ -80,8 +88,9 @@ ul.tabs li {
     padding: 5px 15px;
     cursor: pointer;
 }
+ul.tabs li:hover { background-color: rgba(255, 255, 255, 0.2); }
 ul.tabs li.current {
-    background: #ededed;
+    background-color: #ededed;
     color: #222;
 }
 .tab-content {

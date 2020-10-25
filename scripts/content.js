@@ -125,7 +125,7 @@ function addSavedOutfitElements() {
 addSavedNickElements();
 addSavedOutfitElements();
 
-(function () {
+(function() {
     for (let i = 0; i < 8; i++) {
         setTimeout(function() {
             if ($("#savedOutfits").length)
@@ -219,17 +219,9 @@ var autoSetterEnabled, autoSetterHotkey, autoSetterHotkeyDown,
 chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
 	autoSetterEnabled = response.state;
 });
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.message == "defineAutoSetterEnabled")
-        autoSetterEnabled = request.state;
-});
 
 chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
 	autoSetterHotkey = response.code;
-});
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.message == "defineAutoSetterHotkey")
-        autoSetterHotkey = request.code;
 });
 
 $(window).on("keydown keyup", function(event) {
@@ -244,23 +236,9 @@ Object.keys(autoSetterProperties).forEach(function(key) {
     });
 });
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-    for (var key in changes) {
-        if (namespace == "sync") {
-            if (key.startsWith("autoSetter-property-")){
-                var property = key.slice("autoSetter-property-".length);
-                // var oldValue = changes[key].oldValue;
-                var newValue = changes[key].newValue;
-                autoSetterProperties[property] = newValue;
-            }
-            
-        }
-    }
-});
-
 // gui listener
 var pui = $("#pui");
-var puiObserver = new MutationObserver(function(mutations) {
+var puiObserver = new MutationObserver(function() {
     if (!autoSetterEnabled || !autoSetterHotkeyDown)
         return;
     if (!pui.is(":hidden")) {
@@ -283,7 +261,7 @@ var puiObserver = new MutationObserver(function(mutations) {
                         input[0].dispatchEvent(new Event("focus"));
                         setTimeout(() => {
                             var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function () {
+                            itemPicker.find("div span").each(function() {
                                 if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
                                     $(this).parent()[0].dispatchEvent(new Event("mousedown"));
                                     $(this).parent()[0].dispatchEvent(new Event("mouseup"));
@@ -320,7 +298,7 @@ var puiObserver = new MutationObserver(function(mutations) {
                         input[0].dispatchEvent(new Event("focus"));
                         setTimeout(() => {
                             var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function () {
+                            itemPicker.find("div span").each(function() {
                                 if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
                                     $(this).parent()[0].dispatchEvent(new Event("mousedown"));
                                     $(this).parent()[0].dispatchEvent(new Event("mouseup"));
@@ -357,7 +335,7 @@ var puiObserver = new MutationObserver(function(mutations) {
                         input[0].dispatchEvent(new Event("focus"));
                         setTimeout(() => {
                             var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function () {
+                            itemPicker.find("div span").each(function() {
                                 if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
                                     $(this).parent()[0].dispatchEvent(new Event("mousedown"));
                                     $(this).parent()[0].dispatchEvent(new Event("mouseup"));
@@ -384,7 +362,7 @@ var puiObserver = new MutationObserver(function(mutations) {
 });
 
 // tip list listener (context menu)
-var tipListObserver = new MutationObserver(function(mutations) {
+var tipListObserver = new MutationObserver(function() {
     if (!autoSetterEnabled || !autoSetterHotkeyDown)
         return;
     if ($(".tip-list").length) {
@@ -396,13 +374,139 @@ var tipListObserver = new MutationObserver(function(mutations) {
     }
 });
 
-tipListObserver.observe(document, {
-    subtree: true,
-    childList: true
-});
- 
+function startTipListObserver() {
+    handleChatUrls();
+    tipListObserver.observe(document, { subtree: true, childList: true });
+}
+if (autoSetterProperties.doorSpawnRestriction != -1) startTipListObserver();
+
 puiObserver.observe(pui[0], {
     attributes: true,
     attributeFilter: ["style"]
 });
 /* auto setter end */
+
+/* Chat/MOTD stuff start */
+var makeChatUrlsClickable, allowInteractingChatUrlsWithoutFocus, allowInteractingChatWithoutFocus,
+        makeMotdUrlsClickable;
+
+var allowInteractChatUrlStyle = $("<style>#chat.closed a { pointer-events: auto !important; }</style>");
+var allowInteractChatStyle = $("<style>#chat.closed p { pointer-events: auto !important; user-select: text !important; } </style>");
+
+var keys = ["makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus", "allowInteractingChatWithoutFocus",
+        "makeMotdUrlsClickable"];
+for (const key of keys) {
+    chrome.runtime.sendMessage({message: "getValueOf", key: key}, function(response) {
+        window[key] = response.value;
+        if (key == "makeChatUrlsClickable" && makeChatUrlsClickable) startChatObserver();
+        if (key == "makeMotdUrlsClickable" && makeMotdUrlsClickable) startMotdObserver();
+        
+        if (key == keys[keys.length - 1])
+            keysLoaded();
+    });
+}
+
+function appendInteractChatUrlStyle() {
+    $("html > head").append(allowInteractChatUrlStyle);
+}
+
+function appendInteractChatStyle() {
+    $("html > head").append(allowInteractChatStyle);
+}
+
+function keysLoaded() {
+    if (allowInteractingChatUrlsWithoutFocus && makeChatUrlsClickable) appendInteractChatUrlStyle();
+    if (allowInteractingChatWithoutFocus) appendInteractChatStyle();
+}
+
+const urlRegex = /(https?:\/\/)?([\w\-])+\.{1}([\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=]{2,63})([\/\w-]*)*\/?\??([^<\s#\n\r]*)?#?([^<\s\n\r]*)/gi;
+
+// chat
+var chatContent = $("#chat-content");
+function handleChatUrls() {
+    chatContent.find("p").each(function(index) {
+        if (!$(this).data("sdt-urls")) {
+            chatContentObserver.disconnect();
+            $(this).html(makeUrlsClickable($(this).html()));
+            $(this).data("sdt-urls", true);
+            startChatObserver();
+        }
+    });
+}
+var chatContentObserver = new MutationObserver(function() {
+    handleChatUrls();
+});
+function startChatObserver() {
+    handleChatUrls();
+    chatContentObserver.observe(chatContent[0], { childList: true });
+}
+
+// motd
+var motdText = $("#motd-text");
+function handleMotdUrls() {
+    motdText.html(makeUrlsClickable(motdText.html()));
+}
+var motdTextObserver = new MutationObserver(function() {
+    motdTextObserver.disconnect();
+    handleMotdUrls();
+    startMotdObserver();
+});
+function startMotdObserver() {
+    motdTextObserver.observe(motdText[0], { childList: true });
+}
+
+function makeUrlsClickable(html) {
+    return html.replace(urlRegex, "<a href='//$&' target='_blank'>$&</a>");
+}
+/* Chat/MOTD stuff end */
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (var key in changes) {
+        if (namespace == "sync") {
+            var newValue = changes[key].newValue;
+            if (key == "autoSetter-state") {
+                autoSetterEnabled = newValue;
+            } else if (key == "autoSetter-hotkey") {
+                autoSetterHotkey = newValue;
+            } else if (key.startsWith("autoSetter-property-")){
+                var property = key.slice("autoSetter-property-".length);
+                autoSetterProperties[property] = newValue;
+                if (property == "doorSpawnRestriction") {
+                    if (newValue == -1)
+                        tipListObserver.disconnect();
+                    else
+                        startTipListObserver();
+                }
+            } else if (key == "makeChatUrlsClickable") {
+                makeChatUrlsClickable = newValue;
+                if (makeChatUrlsClickable) {
+                    startChatObserver();
+                } else {
+                    chatContentObserver.disconnect();
+                }
+            } else if (key == "makeMotdUrlsClickable") {
+                makeMotdUrlsClickable = newValue;
+                if (makeMotdUrlsClickable) {
+                    handleMotdUrls();
+                    startMotdObserver();
+                } else {
+                    motdTextObserver.disconnect();
+                }
+            } else if (key == "allowInteractingChatUrlsWithoutFocus") {
+                allowInteractingChatUrlsWithoutFocus = newValue;
+                if (allowInteractingChatUrlsWithoutFocus) {
+                    appendInteractChatUrlStyle()
+                } else {
+                    allowInteractChatUrlStyle = allowInteractChatUrlStyle.detach();
+                }
+            } else if (key == "allowInteractingChatWithoutFocus") {
+                allowInteractingChatWithoutFocus = newValue;
+                if (allowInteractingChatWithoutFocus) {
+                    appendInteractChatStyle()
+                } else {
+                    allowInteractChatStyle = allowInteractChatStyle.detach();
+                }
+            }
+        }
+    }
+});

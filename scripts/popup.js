@@ -1,5 +1,10 @@
 "use strict";
 
+// options button
+$("#optionsButton").click(function() {
+	chrome.tabs.create({"url": "options.html"});
+});
+
 // tabs
 $(document).ready(function() {
 	chrome.runtime.sendMessage({message: "getLastSelectedTab"}, function(response) {
@@ -171,11 +176,11 @@ $("#autoSetter #autoSetterState").change(function() {
     }
 });
 var lastKey;
-$("#autoSetter .hotkey").on("focus", function () {
+$("#autoSetter .hotkey").on("focus", function() {
 	lastKey = $(this).val();
 	$(this).val("< press a key >");
 });
-$("#autoSetter .hotkey").on("blur", function () {
+$("#autoSetter .hotkey").on("blur", function() {
 	if ($(this).val() == "< press a key >")
 		$(this).val(lastKey);
 });
@@ -217,10 +222,10 @@ function settingsChanged(prop) {
 	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: list});
 }
 // dropdown
-$("#autoSetter .filters .edit-button").on("click", function () {
+$("#autoSetter .filters .edit-button").on("click", function() {
 	var button = $(this);
 	var settings = button.next(".settings");
-	settings.slideToggle(90, function () {
+	settings.slideToggle(90, function() {
 		var arrow = button.find("i").eq(0);
 		if (settings.is(":hidden"))
 			arrow.removeClass("up").addClass("down");

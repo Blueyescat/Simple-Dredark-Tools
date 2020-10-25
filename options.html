@@ -1,12 +1,45 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<style>
-
-		</style>
+		<title>Simple Dredark Tools - Options</title>
+		<link rel="stylesheet" href="styles/options.css">
+		<script type="text/javascript" src="lib/jquery/jquery-3.5.1.min.js"></script>
 	</head>
 	<body>
-		<h2>Not options yet.</h2>
+		<header>
+			<img width="48" src="images/dredark-icon.png" alt="Extension icon">
+			<h2>Simple Dredark Tools</h2>
+		</header>
+		<section>
+			<fieldset>
+				<legend><h2>Chat Features</h2></legend>
+				<ul>
+					<li>
+						<label>Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
+						<ul>
+							<li>
+								<label>Allow interacting the URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<label>Allow interacting the messages without opening the chat: <input id="allowInteractingChatWithoutFocus" type="checkbox"></label>
+					</li>
+				</ul>
+			</fieldset>
+			<fieldset>
+				<legend><h2>MOTD Features</h2></legend>
+				<ul>
+					<li>
+						<label>Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
+					</li>
+				</ul>
+			</fieldset>
+		</section>
+		<footer>
+			Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> - Discord: Blueyescat#0733
+		</footer>
+		<script type="text/javascript" src="scripts/options.js"></script>
 	</body>
 	<script src="scripts/options.js"></script>
 </html>

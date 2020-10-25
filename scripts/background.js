@@ -1,7 +1,14 @@
 "use strict";
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	if (request.message == "setLastSelectedTab") {
+	if (request.message == "getValueOf") {
+		chrome.storage.sync.get(request.key, function(data) {
+			sendResponse({value: data[request.key]});
+		});
+		return true;
+	}
+	
+	else if (request.message == "setLastSelectedTab") {
 		if (request.nick == "tab-1")
 			chrome.storage.sync.remove(["lastSelectedTab"]);
 		else
@@ -28,9 +35,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 	else if (request.message == "setSavedOutfit") {
 		var key = "savedOutfit-" + request.index;
-		if (request.outfit == "0||#111111||#c99b86||#47a53b||#154479") {
+		if (request.outfit == "0||#111111||#c99b86||#47a53b||#154479")
 			chrome.storage.sync.remove([key]);
-		} else
+		else
 			chrome.storage.sync.set({[key]: request.outfit});
 	} else if (request.message == "getSavedOutfit") {
 		chrome.storage.sync.get("savedOutfit-" + request.index, function(data) {
@@ -41,13 +48,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 	else if (request.message == "setAutoSetterState") {
 		var key = "autoSetter-state";
-		if (request.state == false) {
+		if (request.state == false)
 			chrome.storage.sync.remove([key]);
-			sendMessageToContentScripts({message: "defineAutoSetterEnabled", state: false});
-		} else {
+		else
 			chrome.storage.sync.set({[key]: true});
-			sendMessageToContentScripts({message: "defineAutoSetterEnabled", state: true});
-		}
 	} else if (request.message == "getAutoSetterState") {
 		chrome.storage.sync.get("autoSetter-state", function(data) {
 			sendResponse({state: data["autoSetter-state"] || false}); // default false
@@ -55,13 +59,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		return true;
 	} else if (request.message == "setAutoSetterHotkey") {
 		var key = "autoSetter-hotkey";
-		if (typeof request.code === "undefined") {
+		if (typeof request.code === "undefined")
 			chrome.storage.sync.remove([key]);
-			sendMessageToContentScripts({message: "defineAutoSetterHotkey", code: undefined});
-		} else {
+		else
 			chrome.storage.sync.set({[key]: request.code});
-			sendMessageToContentScripts({message: "defineAutoSetterHotkey", code: request.code});
-		}
 	} else if (request.message == "getAutoSetterHotkey") {
 		chrome.storage.sync.get("autoSetter-hotkey", function(data) {
 			sendResponse({code: data["autoSetter-hotkey"]});
@@ -78,21 +79,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		var key = "autoSetter-property-" + request.property;
 		chrome.storage.sync.get(key, function(data) {
 			var value = data[key];
-			if (typeof value === "undefined") {
-				// if (request.property == "cargoHatchMode")
+			if (typeof value === "undefined")
 				value = -1;
-			}
 			sendResponse({value: value});
 		});
 		return true;
 	}
 });
 
-function sendMessageToContentScripts(message) {
+/* function sendMessageToContentScripts(message) {
 	var matches = chrome.runtime.getManifest().content_scripts[0].matches;
 	chrome.tabs.query({url: matches}, function(tabs) {
 		tabs.forEach(function(tab) {
 			chrome.tabs.sendMessage(tab.id, message);
 		});
 	});
-}
+} */
