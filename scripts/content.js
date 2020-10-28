@@ -253,25 +253,7 @@ var puiObserver = new MutationObserver(function() {
             if (autoSetterProperties.cargoHatchFiltersState != -1 && autoSetterProperties.cargoHatchFiltersSettings != -1) {
                 var settings = autoSetterProperties.cargoHatchFiltersSettings;
                 var inputs = pui.find("div div > input");
-                inputs.each(function (index) {
-                    if (settings[index].state == true) {
-                        var name = settings[index].name;
-                        if (name == "") name = "No Item";
-                        var input = $(this);
-                        input[0].dispatchEvent(new Event("focus"));
-                        setTimeout(() => {
-                            var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function() {
-                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
-                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
-                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
-                                    input[0].dispatchEvent(new Event("blur"));
-                                    return false;
-                                }
-                            });
-                        }, 1);
-                    }
-                });
+                setFilters(inputs, settings);
                 close = true;
             }
         } else if (pui.text().includes("Loader")) {
@@ -290,25 +272,7 @@ var puiObserver = new MutationObserver(function() {
             if (autoSetterProperties.loaderFiltersState != -1 && autoSetterProperties.loaderFiltersSettings != -1) {
                 var settings = autoSetterProperties.loaderFiltersSettings;
                 var inputs = pui.find("div div > input");
-                inputs.each(function (index) {
-                    if (settings[index].state == true) {
-                        var name = settings[index].name;
-                        if (name == "") name = "No Item";
-                        var input = $(this);
-                        input[0].dispatchEvent(new Event("focus"));
-                        setTimeout(() => {
-                            var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function() {
-                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
-                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
-                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
-                                    input[0].dispatchEvent(new Event("blur"));
-                                    return false;
-                                }
-                            });
-                        }, 1);
-                    }
-                });
+                setFilters(inputs, settings);
                 close = true;
             }
         } else if (pui.text().includes("Pusher")) {
@@ -327,25 +291,7 @@ var puiObserver = new MutationObserver(function() {
             if (autoSetterProperties.pusherFiltersState != -1 && autoSetterProperties.pusherFiltersSettings != -1) {
                 var settings = autoSetterProperties.pusherFiltersSettings;
                 var inputs = pui.find("div div > input");
-                inputs.each(function (index) {
-                    if (settings[index].state == true) {
-                        var name = settings[index].name;
-                        if (name == "") name = "No Item";
-                        var input = $(this);
-                        input[0].dispatchEvent(new Event("focus"));
-                        setTimeout(() => {
-                            var itemPicker = $(this).parent().find(".item-picker");
-                            itemPicker.find("div span").each(function() {
-                                if ($(this).text().toLowerCase().includes(name.toLowerCase())) {
-                                    $(this).parent()[0].dispatchEvent(new Event("mousedown"));
-                                    $(this).parent()[0].dispatchEvent(new Event("mouseup"));
-                                    input[0].dispatchEvent(new Event("blur"));
-                                    return false;
-                                }
-                            });
-                        }, 1);
-                    }
-                });
+                setFilters(inputs, settings);
                 close = true;
             }
         } else if (pui.text().includes("Sign")) {
@@ -360,6 +306,57 @@ var puiObserver = new MutationObserver(function() {
             pui.find("div.close button").click();
     }
 });
+
+function setFilters(inputs, settings) {
+    inputs.each(function (index) {
+        if (settings[index].state == true) {
+            var nameSetting = settings[index].name.toLowerCase().trim();
+            if (nameSetting == "") nameSetting = "no item";
+            var input = $(this);
+            input[0].dispatchEvent(new Event("focus"));
+            setTimeout(() => {
+                var itemPicker = $(this).parent().find(".item-picker");
+                var items = itemPicker.find("div span");
+                var selected;
+                if (!nameSetting.includes("(") && !nameSetting.includes(")")) {
+                    items.each(function() {
+                        var itemName = $(this).text().toLowerCase().replace(/\s?\(.*\)/, "");
+                        if (itemName == nameSetting) {
+                            $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                            $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                            input[0].dispatchEvent(new Event("blur"));
+                            selected = true;
+                            return false;
+                        }
+                    });
+                    if (!selected) {
+                        items.each(function() {
+                            var itemName = $(this).text().toLowerCase().replace(/\s?\(.*\)/, "");
+                            if (itemName.endsWith(nameSetting) || itemName.startsWith(nameSetting)) {
+                                $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                                $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                                input[0].dispatchEvent(new Event("blur"));
+                                selected = true;
+                                return false;
+                            }
+                        });
+                    }
+                }
+                if (!selected) {
+                    items.each(function() {
+                        if ($(this).text().toLowerCase().includes(nameSetting)) {
+                            $(this).parent()[0].dispatchEvent(new Event("mousedown"));
+                            $(this).parent()[0].dispatchEvent(new Event("mouseup"));
+                            input[0].dispatchEvent(new Event("blur"));
+                            selected = true;
+                            return false;
+                        }
+                    });
+                }
+            }, 1);
+        }
+    });
+}
 
 // tip list listener (context menu)
 var tipListObserver = new MutationObserver(function() {
@@ -419,12 +416,12 @@ function keysLoaded() {
     if (allowInteractingChatWithoutFocus) appendInteractChatStyle();
 }
 
-const urlRegex = /(https?:\/\/)?([\w\-])+\.{1}([\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=]{2,63})([\/\w-]*)*\/?\??([^<\s#\n\r]*)?#?([^<\s\n\r]*)/gi;
+const urlRegex = /(?<!@[^\s]*|<[^>]*)(?:http(s)?:\/\/)?[\w.-]{3,}(?:\.(?!\.)[\w.-]+)+[\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=.]+/gi;
 
 // chat
 var chatContent = $("#chat-content");
 function handleChatUrls() {
-    chatContent.find("p").each(function(index) {
+    chatContent.find("p").each(function() {
         if (!$(this).data("sdt-urls")) {
             chatContentObserver.disconnect();
             $(this).html(makeUrlsClickable($(this).html()));
@@ -455,9 +452,13 @@ function startMotdObserver() {
     motdTextObserver.observe(motdText[0], { childList: true });
 }
 
-function makeUrlsClickable(html) {
-    return html.replace(urlRegex, "<a href='//$&' target='_blank'>$&</a>");
+function makeUrlsClickable(text) {
+    return text.replace(urlRegex, function(match) {
+        var urlNoProtocol = match.replace(/(^\w+:|^)\/\//m, "");
+        return `<a href='//${urlNoProtocol}' target='_blank'>${match}</a>`;
+    });
 }
+
 /* Chat/MOTD stuff end */
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {

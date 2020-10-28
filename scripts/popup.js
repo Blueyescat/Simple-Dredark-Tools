@@ -103,7 +103,7 @@ $(".saved-nickname-slot").on("input", function() {
 });
 
 $("#savedNicknames span.sdt-clear").on("click", function() {
-	$(".saved-nickname-slot[data-slot='" + $(this).data("slot") + "']").val("").trigger("input");
+	$(this).prev(".sdt-clearable").val("").trigger("input");
 });
 
 $("#savedOutfits span.sdt-clear").on("click", function() {
@@ -233,6 +233,10 @@ $("#autoSetter .filters .edit-button").on("click", function() {
 			arrow.removeClass("down").addClass("up");
 	});
 });
+$("#autoSetter .filters span.sdt-clear").on("click", function() {
+	$(this).prev(".sdt-clearable").val("").trigger("input");
+});
+
 var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];
 var propertiesSettings = ["cargoHatchFiltersSettings", "loaderFiltersSettings", "pusherFiltersSettings"];
 // show

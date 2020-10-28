@@ -13,6 +13,7 @@
     width: -webkit-max-content;
     margin: 0 auto;
 }
-#chat a {
-    color: #ff0
+#chat a,
+#motd a {
+    color: #00b0f4 !important;
 }

@@ -1,5 +1,16 @@
 "use strict";
 
+// defaults data
+chrome.runtime.onInstalled.addListener(function(details) {
+    if (details.reason == "install") {
+        chrome.storage.sync.set({
+            "makeChatUrlsClickable": true,
+            "allowInteractingChatUrlsWithoutFocus": true,
+            "makeMotdUrlsClickable": true
+        });
+    }
+});
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.message == "getValueOf") {
 		chrome.storage.sync.get(request.key, function(data) {

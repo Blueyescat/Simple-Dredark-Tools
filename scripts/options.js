@@ -1,4 +1,5 @@
 "use strict";
+
 // checkboxes
 var ids = ["#makeChatUrlsClickable", "#allowInteractingChatUrlsWithoutFocus", "#allowInteractingChatWithoutFocus",
         "#makeMotdUrlsClickable"];
@@ -9,11 +10,7 @@ function saveCheckbox(el) {
     chrome.storage.sync.set({[el.attr("id")]: el.prop("checked")});
 }
 
-chrome.storage.sync.get({option: "default"}, function() {
-    chrome.storage.sync.set({["makeChatUrlsClickable"]: true});
-    chrome.storage.sync.set({["allowInteractingChatUrlsWithoutFocus"]: true});
-    chrome.storage.sync.set({["makeMotdUrlsClickable"]: true});
-});
+/* - default options are in background.js - */
 
 function showOptions() {
     chrome.storage.sync.get([

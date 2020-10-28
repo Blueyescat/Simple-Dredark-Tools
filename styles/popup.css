@@ -135,6 +135,10 @@ input[type="text" i] {
 #autoSetter button {
     cursor: pointer;
 }
+#autoSetter .filters input[type="text"] {
+    width: 75%;
+    margin-right: 4px;
+}
 #autoSetter .settings {
     background-color: white;
     color: black;
