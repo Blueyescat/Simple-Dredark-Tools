@@ -28,6 +28,9 @@ cacheMenuElements();
 
 /* Saved nick buttons */
 function addSavedNickElements() {
+    if ($("#savedNicks").length) {
+        return;
+    }
     cacheMenuElements();
     centerContainer.css("flex-wrap", "wrap");
     var flexBreak = $("<div/>",
@@ -72,6 +75,9 @@ function addSavedNickElements() {
 
 /* Saved outfit buttons */
 function addSavedOutfitElements() {
+    if ($("#savedOutfits").length) {
+        return;
+    }
     cacheMenuElements();
     characterCustomization.css("flex-wrap", "wrap");
     var flexBreak = $("<div/>",
