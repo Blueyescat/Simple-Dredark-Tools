@@ -6,7 +6,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
         chrome.storage.sync.set({
             "makeChatUrlsClickable": true,
             "allowInteractingChatUrlsWithoutFocus": true,
-            "makeMotdUrlsClickable": true
+            "makeMotdUrlsClickable": true,
+            "makeChatUrlsClickable": true,
         });
     }
 });

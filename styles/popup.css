@@ -5,6 +5,7 @@ body {
     font-size: 75%;
     width: 290px;
     user-select: none;
+    overflow-y: scroll;
 }
 #optionsButton {
     padding: 4px;

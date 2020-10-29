@@ -6,7 +6,8 @@
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "options_page": "options.html",
   "web_accessible_resources": [
-    "styles/content.css"
+    "styles/content.css",
+    "sfx/beep.mp3"
   ],
   "content_scripts": [
     {

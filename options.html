@@ -25,6 +25,15 @@
 					<li>
 						<label>Allow interacting the messages without opening the chat: <input id="allowInteractingChatWithoutFocus" type="checkbox"></label>
 					</li>
+					<li>
+						<h3>Chat Highlighter</h3>
+						<label>Enabled: <input id="chatHighlighterState" type="checkbox"></label>
+						<br><label>Play sound when a defined text is mentioned: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
+						<h4>Texts to Highlight</h4>
+						Every line is a different text to match and highlight, press ENTER for new line.
+						<br>Should only work for user and system messages.
+						<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
+					</li>
 				</ul>
 			</fieldset>
 			<fieldset>

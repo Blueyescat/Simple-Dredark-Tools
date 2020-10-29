@@ -41,6 +41,10 @@ legend h2 {
     margin-top: 3px;
     margin-bottom: 5px;
 }
+h3, h4 {
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
 fieldset ul {
     padding-inline-start: 20px;
     margin: 0;
@@ -51,4 +55,17 @@ input[type="checkbox"] {
     vertical-align: middle;
     margin-top: 0px;
     cursor: pointer;
+}
+#chatHighlighterTexts {
+    margin-top: 2px;
+    box-sizing: border-box;
+    padding: 5px;
+    min-height: 104px;
+    width: 100%;
+    resize: vertical;
+}
+#previewHighlightSound {
+    text-decoration: underline;
+    cursor: pointer;
+    user-select: none;
 }

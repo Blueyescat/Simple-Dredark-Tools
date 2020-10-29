@@ -2,7 +2,7 @@
 
 // options button
 $("#optionsButton").click(function() {
-	chrome.tabs.create({"url": "options.html"});
+	chrome.runtime.openOptionsPage();
 });
 
 // tabs

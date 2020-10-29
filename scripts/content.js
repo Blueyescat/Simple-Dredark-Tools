@@ -236,11 +236,18 @@ $(window).on("keydown keyup", function(event) {
 });
 
 // == properties ==
-Object.keys(autoSetterProperties).forEach(function(key) {
+const propKeys = Object.keys(autoSetterProperties);
+propKeys.forEach(function(key) {
     chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: key}, function(response) {
         autoSetterProperties[key] = response.value;
+        if (key == propKeys[propKeys.length - 1])
+            autoSetterPropertiesLoaded();
     });
 });
+function autoSetterPropertiesLoaded() {
+    if (autoSetterProperties.doorSpawnRestriction != -1)
+        startTipListObserver();
+}
 
 // gui listener
 var pui = $("#pui");
@@ -378,10 +385,8 @@ var tipListObserver = new MutationObserver(function() {
 });
 
 function startTipListObserver() {
-    handleChatUrls();
     tipListObserver.observe(document, { subtree: true, childList: true });
 }
-if (autoSetterProperties.doorSpawnRestriction != -1) startTipListObserver();
 
 puiObserver.observe(pui[0], {
     attributes: true,
@@ -390,22 +395,34 @@ puiObserver.observe(pui[0], {
 /* auto setter end */
 
 /* Chat/MOTD stuff start */
-var makeChatUrlsClickable, allowInteractingChatUrlsWithoutFocus, allowInteractingChatWithoutFocus,
-        makeMotdUrlsClickable;
+var options = {
+    makeChatUrlsClickable: undefined, allowInteractingChatUrlsWithoutFocus: undefined, allowInteractingChatWithoutFocus: undefined,
+    chatHighlighterState: undefined, chatHighlighterSoundState: undefined, chatHighlighterTexts: undefined,
+    makeMotdUrlsClickable: undefined
+};
 
 var allowInteractChatUrlStyle = $("<style>#chat.closed a { pointer-events: auto !important; }</style>");
 var allowInteractChatStyle = $("<style>#chat.closed p { pointer-events: auto !important; user-select: text !important; } </style>");
 
 var keys = ["makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus", "allowInteractingChatWithoutFocus",
+        "chatHighlighterState", "chatHighlighterSoundState", "chatHighlighterTexts",
         "makeMotdUrlsClickable"];
 for (const key of keys) {
     chrome.runtime.sendMessage({message: "getValueOf", key: key}, function(response) {
-        window[key] = response.value;
-        if (key == "makeChatUrlsClickable" && makeChatUrlsClickable) startChatObserver();
-        if (key == "makeMotdUrlsClickable" && makeMotdUrlsClickable) startMotdObserver();
+        options[key] = response.value;
+        if (key == "makeChatUrlsClickable" && options.makeChatUrlsClickable)
+            startChatObserver();
+        if (key == "chatHighlighterState" && options.chatHighlighterState)
+            startChatObserver();
+        if (key == "chatHighlighterTexts") {
+            options.chatHighlighterTexts = options.chatHighlighterTexts.split("\n");
+            options.chatHighlighterTexts.sort(function(val1, val2) { return val2.length - val1.length; });
+        }
+        if (key == "makeMotdUrlsClickable" && options.makeMotdUrlsClickable)
+            startMotdObserver();
         
         if (key == keys[keys.length - 1])
-            keysLoaded();
+            optionsLoaded();
     });
 }
 
@@ -417,30 +434,110 @@ function appendInteractChatStyle() {
     $("html > head").append(allowInteractChatStyle);
 }
 
-function keysLoaded() {
-    if (allowInteractingChatUrlsWithoutFocus && makeChatUrlsClickable) appendInteractChatUrlStyle();
-    if (allowInteractingChatWithoutFocus) appendInteractChatStyle();
+function optionsLoaded() {
+    if (options.makeChatUrlsClickable && options.allowInteractingChatUrlsWithoutFocus) appendInteractChatUrlStyle();
+    if (options.allowInteractingChatWithoutFocus) appendInteractChatStyle();
 }
 
 const urlRegex = /(?<!@[^\s]*|<[^>]*)(?:http(s)?:\/\/)?[\w.-]{3,}(?:\.(?!\.)[\w.-]+)+[\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=.]+/gi;
+const urlProtocolRegex = /(^\w+:|^)\/\//m;
+const userMsgRegex = /^(?:.*] )?(.*): (.+)$/m;
+const systemMsgRegex = /^\[SYSTEM\] (.+)$/mi;
 
 // chat
 var chatContent = $("#chat-content");
-function handleChatUrls() {
-    chatContent.find("p").each(function() {
-        if (!$(this).data("sdt-urls")) {
+function handleNewMessages() {
+    chatContent.find("> p").each(function() {
+        if (!$(this).attr("data-sdt-handled")) {
             chatContentObserver.disconnect();
-            $(this).html(makeUrlsClickable($(this).html()));
-            $(this).data("sdt-urls", true);
+            if (options.makeChatUrlsClickable)
+                $(this).html(makeUrlsClickable($(this).html()));
+            if (options.chatHighlighterState) {
+                var pText = $(this).text();
+                var messageType = "unknown";
+                var messageSender, messageContent;
+                if (systemMsgRegex.test(pText)) {
+                    messageContent = pText.match(systemMsgRegex)[1];
+                    messageType = "system"
+                } else if (userMsgRegex.test(pText)) {
+                    messageSender = pText.match(userMsgRegex)[1];
+                    messageContent = pText.match(userMsgRegex)[2];
+                    messageType = "user";
+                }
+                if (messageType == "system" || messageType == "user") {
+                    // search regex
+                    var alts = "";
+                    for (var i = 0; i < options.chatHighlighterTexts.length; i++) {
+                        var text = escapeRegex(options.chatHighlighterTexts[i]).trim();
+                        alts += text + (i != options.chatHighlighterTexts.length - 1 ? "|" : "");
+                    }
+                    // get elements
+                    var elements;
+                    if (messageType == "user")
+                        elements = $(this);
+                    else if (messageType == "system")
+                        elements = $(this).find("*").addBack(this);
+                    // loop elements
+                    var anyHighlight;
+                    elements.contents().filter(function() {
+                        return this.nodeType == 3;
+                    }).replaceWith(function() {
+                        var content = escapeHtml($(this).text());
+                        if (messageType == "system") {
+                            if (content.toLowerCase() != "] " + messageContent.toLowerCase())
+                                return content;
+                        } else if (messageType == "user") {
+                            if (messageSender == JSON.parse(localStorage.dredark_join_info || "{}").nickname)
+                                return content;
+                        }
+                        var changed;
+                        content = content.replace(new RegExp(`${alts}`, "gi"), function(match) {
+                            changed = true;
+                            return "<span class='sdt-highlight'>" + match + "</span>";
+                        });
+                        if (changed) {
+                            anyHighlight = true;
+                            return $.parseHTML(content);
+                        }
+                        return content;
+                    });
+                    // at least one highlighting was made
+                    if (options.chatHighlighterSoundState && anyHighlight) {
+                        const audio = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
+                        audio.loop = false;
+                        audio.play();
+                    }
+                }
+            }
+            $(this).attr("data-sdt-handled", true);
             startChatObserver();
         }
     });
 }
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+var htmlEntityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;"
+};
+function escapeHtml(string) {
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return htmlEntityMap[s];
+    });
+}
+
 var chatContentObserver = new MutationObserver(function() {
-    handleChatUrls();
+    handleNewMessages();
 });
 function startChatObserver() {
-    handleChatUrls();
+    handleNewMessages();
     chatContentObserver.observe(chatContent[0], { childList: true });
 }
 
@@ -460,7 +557,7 @@ function startMotdObserver() {
 
 function makeUrlsClickable(text) {
     return text.replace(urlRegex, function(match) {
-        var urlNoProtocol = match.replace(/(^\w+:|^)\/\//m, "");
+        var urlNoProtocol = match.replace(urlProtocolRegex, "");
         return `<a href='//${urlNoProtocol}' target='_blank'>${match}</a>`;
     });
 }
@@ -485,33 +582,39 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                         startTipListObserver();
                 }
             } else if (key == "makeChatUrlsClickable") {
-                makeChatUrlsClickable = newValue;
-                if (makeChatUrlsClickable) {
+                options[key] = newValue;
+                if (options[key]) {
                     startChatObserver();
                 } else {
                     chatContentObserver.disconnect();
                 }
             } else if (key == "makeMotdUrlsClickable") {
-                makeMotdUrlsClickable = newValue;
-                if (makeMotdUrlsClickable) {
+                options[key] = newValue;
+                if (options[key]) {
                     handleMotdUrls();
                     startMotdObserver();
                 } else {
                     motdTextObserver.disconnect();
                 }
             } else if (key == "allowInteractingChatUrlsWithoutFocus") {
-                allowInteractingChatUrlsWithoutFocus = newValue;
-                if (allowInteractingChatUrlsWithoutFocus) {
+                options[key] = newValue;
+                if (options[key]) {
                     appendInteractChatUrlStyle()
                 } else {
                     allowInteractChatUrlStyle = allowInteractChatUrlStyle.detach();
                 }
             } else if (key == "allowInteractingChatWithoutFocus") {
-                allowInteractingChatWithoutFocus = newValue;
-                if (allowInteractingChatWithoutFocus) {
+                options[key] = newValue;
+                if (options[key]) {
                     appendInteractChatStyle()
                 } else {
                     allowInteractChatStyle = allowInteractChatStyle.detach();
+                }
+            } else if (key == "chatHighlighterState" || key == "chatHighlighterSoundState" || key == "chatHighlighterTexts") {
+                options[key] = newValue;
+                if (key == "chatHighlighterTexts") {
+                    options.chatHighlighterTexts = options.chatHighlighterTexts.split("\n");
+                    options.chatHighlighterTexts.sort(function(val1, val2){ return val2.length - val1.length; });
                 }
             }
         }

@@ -15,5 +15,9 @@
 }
 #chat a,
 #motd a {
-    color: #00b0f4 !important;
+    color: #14bcff !important;
+}
+.sdt-highlight {
+    color: #14bcff;
+    font-weight: bold;
 }
