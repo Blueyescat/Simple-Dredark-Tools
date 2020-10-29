@@ -502,7 +502,7 @@ function handleNewMessages() {
                         return content;
                     });
                     // at least one highlighting was made
-                    if (options.chatHighlighterSoundState && anyHighlight) {
+                    if (options.chatHighlighterSoundState && anyHighlight && ($("#chat").hasClass("closed") || !document.hasFocus())) {
                         const audio = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
                         audio.loop = false;
                         audio.play();
