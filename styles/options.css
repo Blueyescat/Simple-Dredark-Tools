@@ -36,6 +36,7 @@ footer {
 footer a {
     color: unset;
 }
+.pointer { cursor: pointer; }
 legend h2 {
     font-size: 1.3em;
     margin-top: 3px;
@@ -55,6 +56,13 @@ input[type="checkbox"] {
     vertical-align: middle;
     margin-top: 0px;
     cursor: pointer;
+}
+@-moz-document url-prefix() {
+    input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        transform: scale(1.4);
+    }
 }
 #chatHighlighterTexts {
     margin-top: 2px;

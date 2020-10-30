@@ -12,41 +12,41 @@
 		</header>
 		<section>
 			<fieldset>
+				<legend><h2>MOTD Features</h2></legend>
+				<ul>
+					<li>
+						<label class="pointer">Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
+					</li>
+				</ul>
+			</fieldset>
+			<fieldset>
 				<legend><h2>Chat Features</h2></legend>
 				<ul style="padding-right: 20px;">
 					<li>
-						<label>Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
+						<label class="pointer">Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
 						<ul>
 							<li>
-								<label>Allow interacting the URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
+								<label class="pointer">Allow interacting the URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<label>Allow interacting the messages without opening the chat: <input id="allowInteractingChatWithoutFocus" type="checkbox"></label>
+						<label class="pointer">Allow interacting the messages without opening the chat: <input id="allowInteractingChatWithoutFocus" type="checkbox"></label>
 					</li>
 					<li>
 						<h3>Chat Highlighter</h3>
-						<label>Enabled: <input id="chatHighlighterState" type="checkbox"></label>
-						<br><label>Play sound when a defined text is mentioned: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
-						<h4>Texts to Highlight</h4>
+						<label class="pointer">Enabled: <input id="chatHighlighterState" type="checkbox"></label>
+						<br><label class="pointer">Play sound when a defined text is mentioned: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
+						<label for="chatHighlighterTexts"><h4>Texts to Highlight</h4></label>
 						Every line is a different text to match and highlight, press ENTER for new line.
 						<br>Should only work for user and system messages.
 						<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
 					</li>
 				</ul>
 			</fieldset>
-			<fieldset>
-				<legend><h2>MOTD Features</h2></legend>
-				<ul>
-					<li>
-						<label>Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
-					</li>
-				</ul>
-			</fieldset>
 		</section>
 		<footer>
-			Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> - Discord: Blueyescat#0733
+			<small>Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> - Discord: Blueyescat#0733</small>
 		</footer>
 		<script type="text/javascript" src="scripts/options.js"></script>
 	</body>
