@@ -396,15 +396,14 @@ puiObserver.observe(pui[0], {
 
 /* Chat/MOTD stuff start */
 var options = {
-    makeChatUrlsClickable: undefined, allowInteractingChatUrlsWithoutFocus: undefined, allowInteractingChatWithoutFocus: undefined,
+    makeChatUrlsClickable: undefined, allowInteractingChatUrlsWithoutFocus: undefined,
     chatHighlighterState: undefined, chatHighlighterSoundState: undefined, chatHighlighterTexts: undefined,
     makeMotdUrlsClickable: undefined
 };
 
 var allowInteractChatUrlStyle = $("<style>#chat.closed a { pointer-events: auto !important; }</style>");
-var allowInteractChatStyle = $("<style>#chat.closed p { pointer-events: auto !important; user-select: text !important; } </style>");
 
-var keys = ["makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus", "allowInteractingChatWithoutFocus",
+var keys = ["makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus",
         "chatHighlighterState", "chatHighlighterSoundState", "chatHighlighterTexts",
         "makeMotdUrlsClickable"];
 for (const key of keys) {
@@ -430,19 +429,16 @@ function appendInteractChatUrlStyle() {
     $("html > head").append(allowInteractChatUrlStyle);
 }
 
-function appendInteractChatStyle() {
-    $("html > head").append(allowInteractChatStyle);
-}
-
 function optionsLoaded() {
     if (options.makeChatUrlsClickable && options.allowInteractingChatUrlsWithoutFocus) appendInteractChatUrlStyle();
-    if (options.allowInteractingChatWithoutFocus) appendInteractChatStyle();
 }
 
-const urlRegex = /(?<!@[^\s]*|<[^>]*)(?:http(s)?:\/\/)?[\w.-]{3,}(?:\.(?!\.)[\w.-]+)+[\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=.]+/gi;
+const urlRegex = /(?<!@[^\s]*|<[^>]*)(?:(http|ftp)(s)?:\/\/)?[\w.-]+[\w.-]\w\.[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=.]+/gi;
 const urlProtocolRegex = /(^\w+:|^)\/\//m;
 const userMsgRegex = /^(?:.*] )?(.*): (.+)$/m;
 const systemMsgRegex = /^\[SYSTEM\] (.+)$/mi;
+const beep = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
+beep.loop = false;
 
 // chat
 var chatContent = $("#chat-content");
@@ -503,9 +499,7 @@ function handleNewMessages() {
                     });
                     // at least one highlighting was made
                     if (options.chatHighlighterSoundState && anyHighlight && ($("#chat").hasClass("closed") || !document.hasFocus())) {
-                        const audio = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
-                        audio.loop = false;
-                        audio.play();
+                        beep.play();
                     }
                 }
             }
@@ -602,13 +596,6 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                     appendInteractChatUrlStyle()
                 } else {
                     allowInteractChatUrlStyle = allowInteractChatUrlStyle.detach();
-                }
-            } else if (key == "allowInteractingChatWithoutFocus") {
-                options[key] = newValue;
-                if (options[key]) {
-                    appendInteractChatStyle()
-                } else {
-                    allowInteractChatStyle = allowInteractChatStyle.detach();
                 }
             } else if (key == "chatHighlighterState" || key == "chatHighlighterSoundState" || key == "chatHighlighterTexts") {
                 options[key] = newValue;

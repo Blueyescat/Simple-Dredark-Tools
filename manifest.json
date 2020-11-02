@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "A simple extension for some tools on Dredark (drednot.io)",
   "author": "Blueyescat <blueyescat123@gmail.com>",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "permissions": ["storage"],
   "options_page": "options.html",
   "web_accessible_resources": [
     "styles/content.css",

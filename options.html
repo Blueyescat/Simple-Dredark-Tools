@@ -26,12 +26,9 @@
 						<label class="pointer">Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
 						<ul>
 							<li>
-								<label class="pointer">Allow interacting the URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
+								<label class="pointer">Allow interacting the clickable URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
 							</li>
 						</ul>
-					</li>
-					<li>
-						<label class="pointer">Allow interacting the messages without opening the chat: <input id="allowInteractingChatWithoutFocus" type="checkbox"></label>
 					</li>
 					<li>
 						<h3>Chat Highlighter</h3>
@@ -39,11 +36,12 @@
 						<br><label class="pointer">Play sound when a defined text is mentioned: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
 						<label for="chatHighlighterTexts"><h4>Texts to Highlight</h4></label>
 						Every line is a different text to match and highlight, press ENTER for new line.
-						<br>Should only work for user and system messages.
+						<br>It should only work for user and system messages.
 						<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
 					</li>
 				</ul>
 			</fieldset>
+			<small><i>The options are automatically saved.</i></small>
 		</section>
 		<footer>
 			<small>Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> - Discord: Blueyescat#0733</small>

@@ -1,15 +1,17 @@
 "use strict";
 
-// defaults data
-chrome.runtime.onInstalled.addListener(function(details) {
-    if (details.reason == "install") {
-        chrome.storage.sync.set({
-            "makeChatUrlsClickable": true,
-            "allowInteractingChatUrlsWithoutFocus": true,
-            "makeMotdUrlsClickable": true,
-            "makeChatUrlsClickable": true,
-        });
-    }
+// default data
+const defaultData = {
+	makeChatUrlsClickable: true,
+	makeMotdUrlsClickable: true
+};
+chrome.runtime.onInstalled.addListener(function() {
+	for (const [key, value] of Object.entries(defaultData)) {
+		chrome.storage.sync.get(key, function(data) {
+			if (typeof data[key] === "undefined")
+				chrome.storage.sync.set({[key]: value});
+		});
+	}
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -21,7 +23,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 	
 	else if (request.message == "setLastSelectedTab") {
-		if (request.nick == "tab-1")
+		if (request.id == "tab-1")
 			chrome.storage.sync.remove(["lastSelectedTab"]);
 		else
 			chrome.storage.sync.set({["lastSelectedTab"]: request.id});
