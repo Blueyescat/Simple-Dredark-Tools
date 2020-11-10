@@ -21,10 +21,10 @@ $(ids.join(", ")).on("input", function() {
     }
 });
 
-var beep = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
-beep.loop = false;
+var sfxBeep = new Audio(chrome.runtime.getURL("sfx/beep.mp3"));
+sfxBeep.loop = false;
 $("#previewHighlightSound").click(function() {
-    beep.play();
+    sfxBeep.play();
 });
 
 /* - default options are in background.js - */

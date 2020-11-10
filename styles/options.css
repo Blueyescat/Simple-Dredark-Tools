@@ -77,3 +77,22 @@ input[type="checkbox"] {
     cursor: pointer;
     user-select: none;
 }
+code {
+    background-color: rgb(88, 88, 88);
+    border-radius: 3px;
+    font-family: courier, monospace;
+    padding: 0 3px;
+}
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 4px 4px 0;
+    width: fit-content;
+}
+summary {
+    margin: -4px -4px 0;
+    padding: 4px;
+    cursor: pointer;
+}
+details[open] { padding: 4px; }
+details[open] summary { margin-bottom: 4px; }

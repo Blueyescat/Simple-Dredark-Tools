@@ -38,6 +38,16 @@
 						Every line is a different text to match and highlight, press ENTER for new line.
 						<br>It should only work for user and system messages.
 						<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
+						<details>
+							<summary>Advanced - RegEx</summary>
+							It is possible to use regex by surrounding the line with <b><code>/</code></b>, use if you know how to.
+							<br>Some useful examples:
+							<ul>
+								<li><b><code>/foo(?! ?bar)/</code></b> - highlight "foo" that doesn't end with "bar" or " bar"</li>
+								<li><b><code>/(?&lt;!baz)foo(?! ?bar)/</code></b> - highlight "foo" that doesn't start with "baz" and doesn't end with "bar" or " bar"</li>
+								<li><b><code>/(?&lt;!baz|quu?x ?|bar)foo/</code></b> - highlight "foo" that doesn't start with "baz", "qux", "qux ", "quux", "quux " or "bar"</li>
+							</ul>
+						</details>						
 					</li>
 				</ul>
 			</fieldset>

@@ -13,7 +13,8 @@
     {
       "matches": ["*://*.drednot.io/*", "*://*.drednot.net/*", "*://*.drednot.com/*"],
       "js": ["lib/jquery/jquery-3.5.1.min.js", "scripts/content.js"],
-      "css": ["styles/content.css"]
+      "css": ["styles/content.css"],
+      "all_frames": true
     }
   ],
   "background": {
