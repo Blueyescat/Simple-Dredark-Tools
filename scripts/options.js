@@ -1,17 +1,17 @@
 "use strict";
 
 // checkboxes
-var ids = ["#makeChatUrlsClickable", "#allowInteractingChatUrlsWithoutFocus", "#chatHighlighterState", "#chatHighlighterSoundState",
+var checkboxIds = ["#makeChatUrlsClickable", "#allowInteractingChatUrlsWithoutFocus", "#chatHighlighterState", "#chatHighlighterSoundState",
         "#makeMotdUrlsClickable"];
-$(ids.join(", ")).change(function() {
+$(checkboxIds.join(", ")).change(function() {
     chrome.storage.sync.set({[$(this).attr("id")]: $(this).prop("checked")});
 });
 
 // textareas
-var ids = ["#chatHighlighterTexts"];
+var textareaIds = ["#chatHighlighterTexts"];
 var taTypingTimer;
 var doneTaTypingInterval = 200;
-$(ids.join(", ")).on("input", function() {
+$(textareaIds.join(", ")).on("input", function() {
     var el = $(this);
     clearTimeout(taTypingTimer);
     if (el.val()) {

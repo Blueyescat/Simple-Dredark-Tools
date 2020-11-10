@@ -1,7 +1,6 @@
 "use strict";
 
-const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:http(s)?:\/\/)?[\w.-]+[\w.-]\w\.[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+,;=.]+/gi;
-const regexUrlProtocol = /(^\w+:|^)\/\//m;
+const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)/gi;
 const regexUserMsg = /^(?:.*] )?(.*): (.+)$/m;
 const regexSystemMsg = /^\[SYSTEM\] (.+)$/mi;
 const regexItemBrackets = /\s?\(.*\)/;
@@ -19,7 +18,7 @@ function escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-var htmlEntityMap = {
+const htmlEntityMap = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -30,7 +29,7 @@ var htmlEntityMap = {
     "=": "&#x3D;"
 };
 function escapeHtml(string) {
-    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return string.replace(/[&<>"'`=\/]/g, function (s) {
         return htmlEntityMap[s];
     });
 }
@@ -525,7 +524,7 @@ function handleNewMessages() {
             messageContent = matches[2];
             messageType = "user";
         }
-        if (messageType == "system" || messageType == "user") {
+        if (messageType != "unknown") {
             // get elements
             var elements;
             if (messageType == "user")
@@ -537,18 +536,19 @@ function handleNewMessages() {
                 elements.contents().filter(function() {
                     return this.nodeType == 3;
                 }).replaceWith(function() {
-                    return makeUrlsClickable($(this).text());
+                    return makeUrlsClickable(escapeHtml($(this).text()));
                 });
             }
             var anyHighlight;
             elements.contents().filter(function() {
                 return this.nodeType == 3;
             }).replaceWith(function() {
-                var content = escapeHtml($(this).text());
+                var content = $(this).text();
                 if (messageType == "system") {
                     if (content.toLowerCase() != "] " + messageContent.toLowerCase())
                         return content;
                 }
+                content = escapeHtml(content);
                 var highlightApplied;
                 if (options.chatHighlighterState && messageSender != JSON.parse(localStorage.dredark_join_info || "{}").nickname) {
                     content = content.replace(regexChatHighligherAlts, function(match) {
@@ -596,9 +596,8 @@ $("#motd-text").on("focus", "a", function(e) {
 });
 
 function makeUrlsClickable(text) {
-    return text.replace(regexUrl, function(match) {
-        var urlNoProtocol = match.replace(regexUrlProtocol, "");
-        return `<a href='//${urlNoProtocol}' target='_blank'>${match}</a>`;
+    return text.replace(regexUrl, function(match, p1) {
+        return `<a href='//${p1}' target='_blank'>${match}</a>`;
     });
 }
 

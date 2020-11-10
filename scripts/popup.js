@@ -152,6 +152,9 @@ function colorLabels() {
 // == main ==
 chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
 	$("#autoSetter #autoSetterState").prop("checked", response.state);
+	if (!response.state) {
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").attr("disabled", true);
+	}
 });
 chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
 	if (typeof response.code !== "undefined") {
@@ -171,8 +174,10 @@ $("#autoSetter #autoSetterState").change(function() {
 				$("#autoSetter .hotkey").trigger(e);
 			}
 		});
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").removeAttr("disabled");
     } else {
 		chrome.runtime.sendMessage({message: "setAutoSetterState", state: false});
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").attr("disabled", true);
     }
 });
 var lastKey;
