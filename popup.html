@@ -5,7 +5,7 @@
 		<script type="text/javascript" src="lib/jquery/jquery-3.5.1.min.js"></script>
 	</head>
 	<body>
-		<img id="optionsButton" src="images/gear-icon.svg" alt="Gear icon">
+		<img id="optionsButton" class="pointer" src="images/gear-icon.svg" alt="Gear icon">
 		<ul class="tabs">
 			<li class="tab-link current" data-tab="tab-1">Nicks</li>
 			<li class="tab-link" data-tab="tab-2">Outfits</li>
@@ -28,20 +28,20 @@
 				<legend><strong>Saved Outfits</strong></legend>
 				<ol>
 					<li class="saved-outfit-slot" data-slot="0">
-						<select class="hair-type" title="Hair type">
+						<select class="hair-type pointer" title="Hair type">
 							<option value="0">Bald</option>
 							<option value="1">Not Bald</option>
 						</select>
-						<input class="color-input hair-color" type="text" value="#111111" title="Hair color">
-						<input class="color-input skin-color" type="text" value="#c99b86" title="Skin color">
-						<input class="color-input body-color" type="text" value="#47a53b" title="Body color">
-						<input class="color-input legs-color" type="text" value="#154479" title="Legs color">
+						<input class="color-input hair-color pointer" type="text" value="#111111" title="Hair color">
+						<input class="color-input skin-color pointer" type="text" value="#c99b86" title="Skin color">
+						<input class="color-input body-color pointer" type="text" value="#47a53b" title="Body color">
+						<input class="color-input legs-color pointer" type="text" value="#154479" title="Legs color">
 						<span class="sdt-clear">&#10006;</span>
 					</li>
 				</ol>
 				<div id="colorPicker">
-					<button class="done-button">Choose</button>
-					<button class="cancel-button">&#10006;</button>
+					<button class="done-button pointer">Choose</button>
+					<button class="cancel-button pointer">&#10006;</button>
 					<br><br>
 				</div>
 			</fieldset>
@@ -49,7 +49,7 @@
 			<datalist id="itemNamesList"></datalist>
 			<fieldset id="autoSetter">
 				<legend><strong>Auto Setter</strong></legend>
-				<label class="pointer">Enabled: <input id="autoSetterState" type="checkbox"></label>
+				<label>Enabled: <input id="autoSetterState" type="checkbox"></label>
 				<span class="info">
 					<span>How it works?</span>
 					<div class="box">

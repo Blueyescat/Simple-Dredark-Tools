@@ -1,5 +1,6 @@
 "use strict";
 
+const regexHtmlEntities = /[&<>"'`=\/]/g;
 const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)/gi;
 const regexUserMsg = /^(?:.*] )?(.*): (.+)$/m;
 const regexSystemMsg = /^\[SYSTEM\] (.+)$/mi;
@@ -29,7 +30,7 @@ const htmlEntityMap = {
     "=": "&#x3D;"
 };
 function escapeHtml(string) {
-    return string.replace(/[&<>"'`=\/]/g, function (s) {
+    return string.replace(regexHtmlEntities, function (s) {
         return htmlEntityMap[s];
     });
 }

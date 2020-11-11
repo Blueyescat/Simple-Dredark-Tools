@@ -14,7 +14,6 @@ body {
     width: 20px;
     float: right;
     margin-right: -2px;
-    cursor: pointer;
 }
 #optionsButton:hover { background-color: rgba(255, 255, 255, 0.2); }
 ol { padding-inline-start: 16px; }
@@ -29,14 +28,12 @@ ol { padding-inline-start: 16px; }
     width: -webkit-max-content;
     padding: 4px;
     margin: 2px;
-    cursor: pointer;
 }
 .saved-outfit-slot input.color-input {
     width: 16px;
     height: 15px;
     border: 2px solid gray;
     color: transparent;
-    cursor: pointer;
     padding: 4px;
     margin: 2px;
 }
@@ -58,7 +55,6 @@ ol { padding-inline-start: 16px; }
     background-color: springgreen;
     border: 1px solid gray;
     border-radius: 5px;
-    cursor: pointer;
 }
 #colorPicker .cancel-button {
     width: -moz-max-content;
@@ -68,7 +64,6 @@ ol { padding-inline-start: 16px; }
     color: white;
     border: 1px solid gray;
     border-radius: 5px;
-    cursor: pointer;
 }
 .tui-colorpicker-palette-toggle-slider {
     display: none !important;
@@ -96,20 +91,13 @@ ul.tabs li.current {
     background-color: #ededed;
     color: #222;
 }
-.tab-content {
-    display: none;
+.tab-content { display: none;
 }
-.tab-content.current {
-    display: inherit;
-}
+.tab-content.current { display: inherit; }
 /* tabs end */
 .hotkey { pointer-events: none; }
-input[type="text" i] {
-    padding: 1px 2px;
-}
-#autoSetter span {
-    font-size: 105%;
-}
+input[type="text" i] { padding: 1px 2px; }
+#autoSetter span { font-size: 105%; }
 #autoSetter label {
     line-height: 20px;
     font-size: 105%;
@@ -127,6 +115,9 @@ input[type="text" i] {
         height: 14px;
         transform: scale(1.4);
     }
+    input[disabled], select[disabled], button[disabled] {
+        opacity: 0.7;
+    }
 }
 #autoSetter select {
     width: 100%;
@@ -142,9 +133,7 @@ input[type="text" i] {
     font-style: italic;
     background: lightgray;
 }
-#autoSetter button {
-    cursor: pointer;
-}
+#autoSetter button { cursor: pointer; }
 #autoSetter .filters input[type="text"] {
     width: 75%;
     margin-right: 4px;

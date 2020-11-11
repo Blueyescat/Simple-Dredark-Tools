@@ -153,7 +153,7 @@ function colorLabels() {
 chrome.runtime.sendMessage({message: "getAutoSetterState"}, function(response) {
 	$("#autoSetter #autoSetterState").prop("checked", response.state);
 	if (!response.state) {
-		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").attr("disabled", true);
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").prop("disabled", true);
 	}
 });
 chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
@@ -167,27 +167,27 @@ $("#autoSetter #autoSetterState").change(function() {
 		chrome.runtime.sendMessage({message: "setAutoSetterState", state: true});
 		chrome.runtime.sendMessage({message: "getAutoSetterHotkey"}, function(response) {
 			if (typeof response.code === "undefined") {
-				var e = jQuery.Event("keyup");
+				var e = $.Event("keyup");
 				e.code = "ShiftLeft";
 				e.key = "Shift";
 				e.keyCode = 16;
 				$("#autoSetter .hotkey").trigger(e);
 			}
 		});
-		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").removeAttr("disabled");
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").prop("disabled", false);
     } else {
 		chrome.runtime.sendMessage({message: "setAutoSetterState", state: false});
-		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").attr("disabled", true);
+		$("#autoSetter input:not(#autoSetterState), #autoSetter select, #autoSetter .edit-button").prop("disabled", true);
     }
 });
-var lastKey;
+var lastHotkey;
 $("#autoSetter .hotkey").on("focus", function() {
-	lastKey = $(this).val();
+	lastHotkey = $(this).val();
 	$(this).val("< press a key >");
 });
 $("#autoSetter .hotkey").on("blur", function() {
 	if ($(this).val() == "< press a key >")
-		$(this).val(lastKey);
+		$(this).val(lastHotkey);
 });
 $("#autoSetter .hotkey").on("keyup", function (event) {
 	var code = getKeyCode(event);
@@ -196,9 +196,9 @@ $("#autoSetter .hotkey").on("keyup", function (event) {
 });
 
 // == properties ==
-var properties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
-for (const prop of properties) {
-    chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
+const autoSetterProperties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
+for (const prop of autoSetterProperties) {
+	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
 		$("#autoSetter ." + prop).val(response.value).change();
 	});
 	$("#autoSetter ." + prop).change(function() {
@@ -218,7 +218,7 @@ $("#autoSetter .signText").on("input", function() {
 
 // = filters =
 // manual hardcoded item list
-var itemNamesList = ["Auto Turret (Packaged)", "Backpack", "Basketball", "Beach Ball", "Block", "Booster Boots", "Booster Fuel (High Grade)", "Booster Fuel (Low Grade)", "Burst Turret (Packaged)", "Cargo Ejector (Packaged)", "Cargo Hatch (Packaged)", "Colored Panel", "Comms Station (Packaged)", "Construction Gauntlets", "Door (Packaged)", "Expando Box (Basic, Packaged)", "Explosives", "Fabricator (Engineering, Packaged)", "Fabricator (Equipment, Packaged)", "Fabricator (Legacy, Packaged)", "Fabricator (Machine, Packaged)", "Fabricator (Munitions, Packaged)", "Flak Ammo", "Flux Crystals", "Football", "Freeport Anchor", "Golden Basketball", "Golden Item Shredder", "Golden Volleyball", "Handheld Pusher", "Helm (Packaged)", "Hover Pack", "Hyper Rubber Block", "Hyper Rubber", "Ice-Glass Block", "Item Launcher (Packaged)", "Item Net", "Item Shredder", "Ladder", "Launcher Gauntlets", "Loader (Packaged)", "Metal", "Punch Ammo", "Pusher (Packaged)", "RC Turret (Packaged)", "Ramp Block", "Recycler (Packaged)", "Repair Tool", "Rocket Pack", "ScatterShot Ammo", "Scrap Metal", "Ship Embiggener", "Ship Shield Booster", "Ship Shrinkinator", "Sign (Packaged)", "Silica Crystals", "Slug Ammo", "Sniper Ammo", "Spawn Point (Packaged)", "Speed Skates", "Standard Ammo", "Thruster (Packaged)", "Thruster Fuel", "Trash Ammo", "Turret (Packaged)", "Turret Controller (Basic, Packaged)", "Volleyball", "Walkway", "Wrench", "Yank Ammo", "No Item"];
+const itemNamesList = ["Auto Turret (Packaged)", "Backpack", "Basketball", "Beach Ball", "Block", "Booster Boots", "Booster Fuel (High Grade)", "Booster Fuel (Low Grade)", "Burst Turret (Packaged)", "Cargo Ejector (Packaged)", "Cargo Hatch (Packaged)", "Colored Panel", "Comms Station (Packaged)", "Construction Gauntlets", "Door (Packaged)", "Expando Box (Basic, Packaged)", "Explosives", "Fabricator (Engineering, Packaged)", "Fabricator (Equipment, Packaged)", "Fabricator (Legacy, Packaged)", "Fabricator (Machine, Packaged)", "Fabricator (Munitions, Packaged)", "Flak Ammo", "Flux Crystals", "Football", "Freeport Anchor", "Golden Basketball", "Golden Item Shredder", "Golden Volleyball", "Handheld Pusher", "Helm (Packaged)", "Hover Pack", "Hyper Rubber Block", "Hyper Rubber", "Ice-Glass Block", "Item Launcher (Packaged)", "Item Net", "Item Shredder", "Ladder", "Launcher Gauntlets", "Loader (Packaged)", "Metal", "Punch Ammo", "Pusher (Packaged)", "RC Turret (Packaged)", "Ramp Block", "Recycler (Packaged)", "Repair Tool", "Rocket Pack", "ScatterShot Ammo", "Scrap Metal", "Ship Embiggener", "Ship Shield Booster", "Ship Shrinkinator", "Sign (Packaged)", "Silica Crystals", "Slug Ammo", "Sniper Ammo", "Spawn Point (Packaged)", "Speed Skates", "Standard Ammo", "Thruster (Packaged)", "Thruster Fuel", "Trash Ammo", "Turret (Packaged)", "Turret Controller (Basic, Packaged)", "Volleyball", "Walkway", "Wrench", "Yank Ammo", "No Item"];
 itemNamesList.forEach(function(name) {
 	$("#itemNamesList").append($("<option>", {
 		text: name
@@ -301,7 +301,8 @@ function getKeyCode(event) {
 	return code;
 }
 
+const regexUnPascal = /([^[A-Z0-9]{2,})([A-Z0-9])/g;
 function unPascalCase(text) {
-	return text.replace(/([^[A-Z0-9]{2,})([A-Z0-9])/g, "$1 $2");
+	return text.replace(regexUnPascal, "$1 $2");
 }
 /* auto setter end */
