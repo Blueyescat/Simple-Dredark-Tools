@@ -1,7 +1,7 @@
 "use strict";
 
 const regexHtmlEntities = /[&<>"'`=\/]/g;
-const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)/gi;
+const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.(?!exe|rn)[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)(?<!\.)/gi;
 const regexUserMsg = /^(?:.*] )?(.*): (.+)$/m;
 const regexSystemMsg = /^\[SYSTEM\] (.+)$/mi;
 const regexItemBrackets = /\s?\(.*\)/;
@@ -295,16 +295,17 @@ var puiObserver = new MutationObserver(async function() {
     if (!autoSetterEnabled || !autoSetterHotkeyDown)
         return;
     if (!pui.is(":hidden")) {
-        pui.hide();
         var close;
         if (pui.text().includes("Cargo Hatch")) {
             if (autoSetterProperties.cargoHatchMode != -1) {
+                pui.hide();
                 var select = pui.find("div select").eq(0);
                 select.val(autoSetterProperties.cargoHatchMode);
                 select[0].dispatchEvent(new Event("change"));
                 close = true;
             }
             if (autoSetterProperties.cargoHatchFiltersState != -1 && autoSetterProperties.cargoHatchFiltersSettings != -1) {
+                if (!close) pui.hide();
                 var settings = autoSetterProperties.cargoHatchFiltersSettings;
                 var inputs = pui.find("div div > input");
                 await setFilters(inputs, settings);
@@ -312,18 +313,21 @@ var puiObserver = new MutationObserver(async function() {
             }
         } else if (pui.text().includes("Loader")) {
             if (autoSetterProperties.loaderMode != -1) {
+                pui.hide();
                 var select = pui.find("div select").eq(0);
                 select.val(autoSetterProperties.loaderMode);
                 select[0].dispatchEvent(new Event("change"));
                 close = true;
             }
             if (autoSetterProperties.loaderInvRequirement != -1) {
+                if (!close) pui.hide();
                 var checkbox = pui.find("div p label input[type='checkbox']").eq(0);
                 checkbox.prop("checked", autoSetterProperties.loaderInvRequirement == 1)
                 checkbox[0].dispatchEvent(new Event("change"));
                 close = true;
             }
             if (autoSetterProperties.loaderFiltersState != -1 && autoSetterProperties.loaderFiltersSettings != -1) {
+                if (!close) pui.hide();
                 var settings = autoSetterProperties.loaderFiltersSettings;
                 var inputs = pui.find("div div > input");
                 await setFilters(inputs, settings);
@@ -331,18 +335,21 @@ var puiObserver = new MutationObserver(async function() {
             }
         } else if (pui.text().includes("Pusher")) {
             if (autoSetterProperties.pusherPrimaryMode != -1) {
+                pui.hide();
                 var select = pui.find("div select").eq(0);
                 select.val(autoSetterProperties.pusherPrimaryMode);
                 select[0].dispatchEvent(new Event("change"));
                 close = true;
             }
             if (autoSetterProperties.pusherFilteredMode != -1) {
+                if (!close) pui.hide();
                 var select = pui.find("div select").eq(1);
                 select.val(autoSetterProperties.pusherFilteredMode);
                 select[0].dispatchEvent(new Event("change"));
                 close = true;
             }
             if (autoSetterProperties.pusherFiltersState != -1 && autoSetterProperties.pusherFiltersSettings != -1) {
+                if (!close) pui.hide();
                 var settings = autoSetterProperties.pusherFiltersSettings;
                 var inputs = pui.find("div div > input");
                 await setFilters(inputs, settings);
@@ -350,6 +357,7 @@ var puiObserver = new MutationObserver(async function() {
             }
         } else if (pui.text().includes("Sign")) {
             if (autoSetterProperties.signText != -1) {
+                pui.hide();
                 var input = pui.find("div input").eq(0);
                 input.val(autoSetterProperties.signText);
                 input[0].dispatchEvent(new Event("input"));
@@ -592,7 +600,7 @@ var motdTextObserver = new MutationObserver(function() {
 function startMotdObserver() {
     motdTextObserver.observe(motdText[0], { childList: true });
 }
-$("#motd-text").on("focus", "a", function(e) {
+$("#motd-text, #chat").on("focus", "a", function(e) {
     $(this).blur();
 });
 
@@ -614,7 +622,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 autoSetterHotkey = newValue;
             } else if (key.startsWith("autoSetter-property-")){
                 var property = key.slice("autoSetter-property-".length);
-                autoSetterProperties[property] = newValue;
+                autoSetterProperties[property] = newValue || -1;
                 if (property == "doorSpawnRestriction") {
                     if (newValue == -1)
                         tipListObserver.disconnect();
