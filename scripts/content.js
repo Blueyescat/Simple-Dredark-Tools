@@ -50,7 +50,7 @@ function cacheMenuElements() {
         menuNicknameInput = theMenu.find("input[maxlength='16']").eq(0);
     if (!menuNickname.length && menuNicknameInput.length) // backup
         menuNickname = menuNicknameInput.parent();
-    if ($("#start-menu-inner").length) $(".center-container-h").css({"display": "block", "width": "fit-content", "margin": "0 auto"}); // REMOVE LATER
+    if ($("#start-menu-inner").length) $(".center-container-h").attr("style", "display: block; width: -moz-fit-content; width: fit-content; margin: 0 auto;"); // REMOVE LATER
     menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
     if (!menuAppearance.length) { // backup
         menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
@@ -81,11 +81,7 @@ function addSavedNickElements() {
     cacheMenuElements();
     var container = $("<div/>",
     {
-        id: "savedNicks",
-        css: {
-            "width": "fit-content",
-            "margin": "0 auto"
-        }
+        id: "savedNicks"
     });
     for (let i = 0; i < 5; i++) {
         var btn = $("<button/>",
@@ -129,11 +125,7 @@ function addSavedOutfitElements() {
     cacheMenuElements();
     var container = $("<div/>",
     {
-        id: "savedOutfits",
-        css: {
-            "width": "fit-content",
-            "margin": "0 auto"
-        }
+        id: "savedOutfits"
     });
     for (let i = 0; i < 5; i++) {
         var btn = $("<button/>",
