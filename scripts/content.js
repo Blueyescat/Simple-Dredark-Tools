@@ -1,7 +1,8 @@
 "use strict";
 
 const regexHtmlEntities = /[&<>"'`=\/]/g;
-const regexUrl = /(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.(?!exe|rn)[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)(?<!\.)/gi;
+const regexFileExtensions = "midi?|mp3|mpa|ogg|wav|wma|7z|deb|pkg|rar|gz|z|zip|bin|dmg|iso|csv|dat|dbf?|log|mdb|sav|sql|tar|xml|apk|bat|bin|exe|jar|msi|wsf|fnt|fon|otf|ttf|bmp|gif|ico|jpe?g|png|psd|svg|css|html?|js|php|py|c|class|java|cs|sh|swift|ico|sys|tmp|dll|icns|avi|flv|mkv|mov|mp4|mpe?g|swf|wmv|docx?|xlsx?|pptx?|pps|rtf|txt|pdf";
+const regexUrl = new RegExp(String.raw`(?<!@[^\s]*|<[^>]*)(?:https?:)?(?:(?:\/|&#x2F;)(?:\/|&#x2F;))?([\w.-]+[\w.-]\w\.(?!(?:${regexFileExtensions}|no)(?!\w))[a-zA-Z-_][\w\-_~:/?#[\]@!\$&'\(\)\*\+%,;=.]+)(?<!\.)`, "gi");
 const regexUserMsg = /^(?:.*] )?(.*): (.+)$/m;
 const regexSystemMsg = /^\[SYSTEM\] (.+)$/mi;
 const regexItemBrackets = /\s?\(.*\)/;
@@ -35,27 +36,39 @@ function escapeHtml(string) {
     });
 }
 
-var startMenuInner, centerContainer, nameInput,
-    characterCustomization, customizationTable, hairButton, hairSelect, skinButton, bodyButton, legsButton;
+var theMenu, menuAccountSection,
+    menuNickname, menuNicknameInput,
+    menuAppearance, customizationTable, menuHairButton, menuHairSelect, menuSkinButton, menuBodyButton, menuLegsButton;
 
 function cacheMenuElements() {
-    startMenuInner = $("#start-menu-inner");
-    centerContainer = startMenuInner.find(".center-container-h").eq(0);
-    nameInput = centerContainer.find("input[placeholder='Nickname']").eq(0);
-
-    characterCustomization = centerContainer.next("div");
-    customizationTable = characterCustomization.find("table").eq(0);
+    theMenu = $("#shipyard-left");
+    if (!theMenu.length) theMenu = $("#start-menu-inner"); // REMOVE LATER
+    menuAccountSection = theMenu.find("section :header:contains('Account')").parent().eq(0);
+    menuNickname = menuAccountSection.find("p b:contains('Nickname')").parent().eq(0);
+    menuNicknameInput = menuNickname.find("input").eq(0);
+    if (!menuNicknameInput.length) // backup
+        menuNicknameInput = theMenu.find("input[maxlength='16']").eq(0);
+    if (!menuNickname.length && menuNicknameInput.length) // backup
+        menuNickname = menuNicknameInput.parent();
+    if ($("#start-menu-inner").length) $(".center-container-h").css({"display": "block", "width": "fit-content", "margin": "0 auto"}); // REMOVE LATER
+    menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
+    if (!menuAppearance.length) { // backup
+        menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
+        if (!menuAppearance.length) // backup 2
+            menuAppearance = theMenu.find("div p:contains('Customize')").parent().eq(0);
+    }
+    customizationTable = menuAppearance.find("table").eq(0);
 
     customizationTable.find("tr").each(function(index, tr) { 
         if ($(tr).text().includes("Hair")) {
-            hairButton = $(tr).find("button").eq(0);
-            hairSelect = $(tr).find("select").eq(0);
+            menuHairButton = $(tr).find("button").eq(0);
+            menuHairSelect = $(tr).find("select").eq(0);
         } else if ($(tr).text().includes("Skin")) {
-            skinButton = $(tr).find("button").eq(0);
+            menuSkinButton = $(tr).find("button").eq(0);
         } else if ($(tr).text().includes("Body")) {
-            bodyButton = $(tr).find("button").eq(0);
+            menuBodyButton = $(tr).find("button").eq(0);
         } else if ($(tr).text().includes("Legs")) {
-            legsButton = $(tr).find("button").eq(0);
+            menuLegsButton = $(tr).find("button").eq(0);
         }
     });
 }
@@ -66,20 +79,22 @@ function addSavedNickElements() {
     if ($("#savedNicks").length)
         return;
     cacheMenuElements();
-    centerContainer.css("flex-wrap", "wrap");
-    var flexBreak = $("<div/>",
-    {
-        class: "flex-break"
-    });
-    centerContainer.append(flexBreak);
     var container = $("<div/>",
     {
-        id: "savedNicks"
+        id: "savedNicks",
+        css: {
+            "width": "fit-content",
+            "margin": "0 auto"
+        }
     });
     for (let i = 0; i < 5; i++) {
         var btn = $("<button/>",
         {
             text: parseInt(i) + 1,
+            css: {
+                "padding": "2px 5px 2px 5px",
+                "margin-bottom": "0"
+            },
             click: function() { loadSavedNick(i); }
         });
         btn.attr("data-slot", i);
@@ -103,7 +118,7 @@ function addSavedNickElements() {
         btn.append(tooltip);
         container.append(btn);
     }
-    centerContainer.append(container);
+    menuNickname.append(container);
 }
 /* Saved nick buttons end */
 
@@ -112,20 +127,22 @@ function addSavedOutfitElements() {
     if ($("#savedOutfits").length)
         return;
     cacheMenuElements();
-    characterCustomization.css("flex-wrap", "wrap");
-    var flexBreak = $("<div/>",
-    {
-        class: "flex-break"
-    });
-    characterCustomization.append(flexBreak);
     var container = $("<div/>",
     {
-        id: "savedOutfits"
+        id: "savedOutfits",
+        css: {
+            "width": "fit-content",
+            "margin": "0 auto"
+        }
     });
     for (let i = 0; i < 5; i++) {
         var btn = $("<button/>",
         {
             text: parseInt(i) + 1,
+            css: {
+                "padding": "2px 5px 2px 5px",
+                "margin-bottom": "0"
+            },
             click: function() { loadSavedOutfit(i); }
         });
         btn.attr("data-slot", i);
@@ -157,7 +174,7 @@ function addSavedOutfitElements() {
         btn.append(tooltip);
         container.append(btn);
     }
-    characterCustomization.append(container);
+    menuAppearance.append(container);
 }
 /* Saved outfit buttons end */
 
@@ -172,7 +189,7 @@ addSavedNickElements();
     }
 })();
 
-// Sometimes Dredark resets the start menu, for example after killed the game
+// Sometimes Dredark resets the start menu, for example after killed the game - REMOVE LATER?
 $(document).mousemove(function() {
     if (!$("#savedNicks").length)
         addSavedNickElements();
@@ -182,8 +199,8 @@ $(document).mousemove(function() {
 
 /* Saved nick buttons */
 function inputNick(nick) {
-    nameInput.val(nick);
-    nameInput.get(0).dispatchEvent(new Event("input"));
+    menuNicknameInput.val(nick);
+    menuNicknameInput.get(0).dispatchEvent(new Event("input"));
 }
 
 function loadSavedNick(i) {
@@ -218,15 +235,15 @@ async function inputColor(btn, color) {
 
 function inputOutfit(outfit) {
     var data = outfit.split("||");
-    hairSelect.find("option").filter(function() {
+    menuHairSelect.find("option").filter(function() {
         return $(this).text() == (data[0] == 0 ? "Bald" : "Not Bald");
     }).prop("selected", true);
-    hairSelect.get(0).dispatchEvent(new Event("change"));
+    menuHairSelect.get(0).dispatchEvent(new Event("change"));
 
-    inputColor(hairButton, data[1]);
-    inputColor(skinButton, data[2]);
-    inputColor(bodyButton, data[3]);
-    inputColor(legsButton, data[4]);
+    inputColor(menuHairButton, data[1]);
+    inputColor(menuSkinButton, data[2]);
+    inputColor(menuBodyButton, data[3]);
+    inputColor(menuLegsButton, data[4]);
     window.dispatchEvent(new Event("click"))
 }
 
