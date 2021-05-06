@@ -41,9 +41,7 @@ var theMenu, menuAccountSection,
 
 function cacheMenuElements() {
     theMenu = $("#shipyard-left");
-    if (!theMenu.length) theMenu = $("#start-menu-inner"); // REMOVE LATER
     menuAccountSection = theMenu.find("section :header:contains('Account')").parent().eq(0);
-    if ($("#start-menu-inner").length) $(".center-container-h").attr("style", "display: block; width: -moz-fit-content; width: fit-content; margin: 0 auto;"); // REMOVE LATER
     menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
     if (!menuAppearance.length) { // backup
         menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
@@ -128,11 +126,11 @@ function addSavedOutfitElements() {
     }
 })();
 
-// Sometimes Dredark resets the start menu, for example after killed the game - REMOVE LATER?
+/* // Sometimes Dredark resets the start menu, for example after killed the game
 $(document).mousemove(function() {
     if (!$("#savedOutfits").length)
         addSavedOutfitElements();
-});
+}); */
 
 /* Saved outfit buttons */
 async function inputColor(btn, color) {
