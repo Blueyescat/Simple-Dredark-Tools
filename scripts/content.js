@@ -65,6 +65,41 @@ function cacheMenuElements() {
 }
 cacheMenuElements();
 
+async function getUsedPlayerName() {
+    var settingsButton = $("#content-bottom button:contains('Settings')");
+    if (settingsButton.length) {
+        settingsButton.click();
+        var settingsMenu = $("#new-ui-left div:visible");
+        settingsMenu.hide();
+        var accountSection = settingsMenu.find("section :header:contains('Account')").parent().eq(0);
+        await sleep(10);
+        var pUsername = accountSection.find("p:contains('Username')")
+        var playerName = "";
+        if (pUsername.length) {
+            playerName = pUsername.find("code").eq(0).text();
+            if (playerName.length > 1) {
+                window.sessionStorage["sdt-usedPlayerName"] = playerName;
+            }
+        } else {
+            var pDiscriminator = accountSection.find("p:contains('Discriminator')")
+            playerName = pDiscriminator.find("code").eq(0).text();
+            if (playerName.length > 1) {
+                window.sessionStorage["sdt-usedPlayerName"] = playerName;
+            }
+        }
+        settingsButton.click();
+    }
+}
+
+(async function() {
+    for (let i = 0; i < 32; i++) {
+        await sleep(150);
+        await getUsedPlayerName();
+        if (window.sessionStorage["sdt-usedPlayerName"])
+            return;
+    }
+})();
+
 /* Saved outfit buttons */
 function addSavedOutfitElements() {
     if ($("#savedOutfits").length)
@@ -497,7 +532,7 @@ function handleNewMessages() {
                 }
                 content = escapeHtml(content);
                 var highlightApplied;
-                if (options.chatHighlighterState && messageSender != "") { // TODO need the used name
+                if (options.chatHighlighterState && messageSender != window.sessionStorage["sdt-usedPlayerName"]) {
                     content = content.replace(regexChatHighligherAlts, function(match) {
                         highlightApplied = true;
                         return "<span class='sdt-highlight'>" + match + "</span>";
