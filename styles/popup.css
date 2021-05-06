@@ -17,12 +17,6 @@ body {
 }
 #optionsButton:hover { background-color: rgba(255, 255, 255, 0.2); }
 ol { padding-inline-start: 16px; }
-.saved-nickname-slot {
-    width: 86.5%;
-    padding: 4px;
-    margin: 2px;
-    margin-right: 4px;
-}
 #savedOutfits select {
     width: -moz-max-content;
     width: -webkit-max-content;

@@ -8,7 +8,7 @@
     transform: translate(-50%, 100%) !important;
     font-weight: bold;
 }
-#savedNicks, #savedOutfits {
+#savedOutfits {
     width: -moz-fit-content;
     width: fit-content;
     margin: 0 auto;

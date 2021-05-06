@@ -79,11 +79,6 @@ $("#colorPicker .cancel-button").on("click", function(event) {
 /* color picker end */
 
 for (let i = 0; i < 5; i++) {
-	chrome.runtime.sendMessage({message: "getSavedNick", index: i}, function(response) {
-		if (typeof response.nick !== "undefined")
-			$(".saved-nickname-slot[data-slot='" + i + "']").val(response.nick);
-	});
-	
 	chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
 		if (typeof response.outfit !== "undefined") {
 			var data = response.outfit.split("||");
@@ -97,14 +92,6 @@ for (let i = 0; i < 5; i++) {
 			colorLabels();
 	});
 }
-
-$(".saved-nickname-slot").on("input", function() {
-	chrome.runtime.sendMessage({message: "setSavedNick", index: $(this).data("slot"), nick: $(this).val()});
-});
-
-$("#savedNicknames span.sdt-clear").on("click", function() {
-	$(this).prev(".sdt-clearable").val("").trigger("input");
-});
 
 $("#savedOutfits span.sdt-clear").on("click", function() {
 	var li = $(this).parent();

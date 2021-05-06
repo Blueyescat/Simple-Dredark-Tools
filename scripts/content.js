@@ -37,19 +37,12 @@ function escapeHtml(string) {
 }
 
 var theMenu, menuAccountSection,
-    menuNickname, menuNicknameInput,
     menuAppearance, customizationTable, menuHairButton, menuHairSelect, menuSkinButton, menuBodyButton, menuLegsButton;
 
 function cacheMenuElements() {
     theMenu = $("#shipyard-left");
     if (!theMenu.length) theMenu = $("#start-menu-inner"); // REMOVE LATER
     menuAccountSection = theMenu.find("section :header:contains('Account')").parent().eq(0);
-    menuNickname = menuAccountSection.find("p b:contains('Nickname')").parent().eq(0);
-    menuNicknameInput = menuNickname.find("input").eq(0);
-    if (!menuNicknameInput.length) // backup
-        menuNicknameInput = theMenu.find("input[maxlength='16']").eq(0);
-    if (!menuNickname.length && menuNicknameInput.length) // backup
-        menuNickname = menuNicknameInput.parent();
     if ($("#start-menu-inner").length) $(".center-container-h").attr("style", "display: block; width: -moz-fit-content; width: fit-content; margin: 0 auto;"); // REMOVE LATER
     menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
     if (!menuAppearance.length) { // backup
@@ -73,50 +66,6 @@ function cacheMenuElements() {
     });
 }
 cacheMenuElements();
-
-/* Saved nick buttons */
-function addSavedNickElements() {
-    if ($("#savedNicks").length)
-        return;
-    cacheMenuElements();
-    var container = $("<div/>",
-    {
-        id: "savedNicks"
-    });
-    for (let i = 0; i < 5; i++) {
-        var btn = $("<button/>",
-        {
-            text: parseInt(i) + 1,
-            css: {
-                "padding": "2px 5px 2px 5px",
-                "margin-bottom": "0"
-            },
-            click: function() { loadSavedNick(i); }
-        });
-        btn.attr("data-slot", i);
-        btn.mouseenter(function() {
-            var button = $(this);
-            chrome.runtime.sendMessage({message: "getSavedNick", index: button.data("slot")}, function(response) {
-                var tooltip = $("#savedNicks .sdt-tooltip[data-slot='" + button.data("slot") + "']");
-                if (typeof response.nick !== "undefined")
-                    tooltip.text(response.nick);
-                else
-                    tooltip.text("");
-            });
-        });
-        var tooltip = $("<div/>",
-        {
-            class: "tooltip",
-            text: ""
-        });
-        tooltip.attr("data-slot", i);
-        tooltip.addClass("sdt-tooltip");
-        btn.append(tooltip);
-        container.append(btn);
-    }
-    menuNickname.append(container);
-}
-/* Saved nick buttons end */
 
 /* Saved outfit buttons */
 function addSavedOutfitElements() {
@@ -170,8 +119,6 @@ function addSavedOutfitElements() {
 }
 /* Saved outfit buttons end */
 
-addSavedNickElements();
-
 (async function() {
     for (let i = 0; i < 32; i++) {
         addSavedOutfitElements();
@@ -183,25 +130,9 @@ addSavedNickElements();
 
 // Sometimes Dredark resets the start menu, for example after killed the game - REMOVE LATER?
 $(document).mousemove(function() {
-    if (!$("#savedNicks").length)
-        addSavedNickElements();
     if (!$("#savedOutfits").length)
         addSavedOutfitElements();
 });
-
-/* Saved nick buttons */
-function inputNick(nick) {
-    menuNicknameInput.val(nick);
-    menuNicknameInput.get(0).dispatchEvent(new Event("input"));
-}
-
-function loadSavedNick(i) {
-    chrome.runtime.sendMessage({message: "getSavedNick", index: i}, function(response) {
-		if (typeof response.nick !== "undefined")
-			inputNick(response.nick);
-	});
-}
-/* Saved nick buttons end */
 
 /* Saved outfit buttons */
 async function inputColor(btn, color) {
@@ -568,7 +499,7 @@ function handleNewMessages() {
                 }
                 content = escapeHtml(content);
                 var highlightApplied;
-                if (options.chatHighlighterState && messageSender != JSON.parse(localStorage.dredark_join_info || "{}").nickname) {
+                if (options.chatHighlighterState && messageSender != "") { // TODO need the used name
                     content = content.replace(regexChatHighligherAlts, function(match) {
                         highlightApplied = true;
                         return "<span class='sdt-highlight'>" + match + "</span>";
