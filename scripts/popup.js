@@ -9,10 +9,14 @@ $("#optionsButton").click(function() {
 $(document).ready(function() {
 	chrome.runtime.sendMessage({message: "getLastSelectedTab"}, function(response) {
 		if (typeof response.id !== "undefined") {
-			$("ul.tabs li").removeClass("current");
+			var li = $("ul.tabs li");
+			if (li.filter("[data-tab='" + response.id + "']").length == 0) {
+				response.id = "tab-" + li.length;
+			}
+			li.removeClass("current");
 			$(".tab-content").removeClass("current");
 
-			$("ul.tabs li[data-tab='" + response.id + "']").addClass("current");
+			li.filter("[data-tab='" + response.id + "']").addClass("current");
 			$("#" + response.id).addClass("current");
 		}
 	});
