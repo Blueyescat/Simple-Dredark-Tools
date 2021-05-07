@@ -46,4 +46,5 @@ function showOptions() {
 
 $(document).ready(function() {
     showOptions();
+    $("#extensionVersion").text(chrome.runtime.getManifest().version);
 });

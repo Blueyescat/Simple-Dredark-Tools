@@ -77,15 +77,13 @@ async function getUsedPlayerName() {
         var playerName = "";
         if (pUsername.length) {
             playerName = pUsername.find("code").eq(0).text();
-            if (playerName.length > 1) {
+            if (playerName.length > 1)
                 window.sessionStorage["sdt-usedPlayerName"] = playerName;
-            }
         } else {
             var pDiscriminator = accountSection.find("p:contains('Discriminator')")
             playerName = pDiscriminator.find("code").eq(0).text();
-            if (playerName.length > 1) {
+            if (playerName.length > 1)
                 window.sessionStorage["sdt-usedPlayerName"] = playerName;
-            }
         }
         settingsButton.click();
     }

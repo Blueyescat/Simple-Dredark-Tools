@@ -10,9 +10,8 @@ $(document).ready(function() {
 	chrome.runtime.sendMessage({message: "getLastSelectedTab"}, function(response) {
 		if (typeof response.id !== "undefined") {
 			var li = $("ul.tabs li");
-			if (li.filter("[data-tab='" + response.id + "']").length == 0) {
+			if (li.filter("[data-tab='" + response.id + "']").length == 0)
 				response.id = "tab-" + li.length;
-			}
 			li.removeClass("current");
 			$(".tab-content").removeClass("current");
 
