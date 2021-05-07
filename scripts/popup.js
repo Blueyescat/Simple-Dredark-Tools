@@ -186,7 +186,7 @@ $("#autoSetter .hotkey").on("keyup", function (event) {
 });
 
 // == properties ==
-const autoSetterProperties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction"];
+const autoSetterProperties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction", "signShowTextMode"];
 for (const prop of autoSetterProperties) {
 	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
 		$("#autoSetter ." + prop).val(response.value).change();
@@ -197,7 +197,7 @@ for (const prop of autoSetterProperties) {
 		$(this).attr("style", selectedOption.attr("style"));
 	});
 }
-// sign
+// sign text
 chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: "signText"}, function(response) {
 	if (response.value !== -1)
 		$("#autoSetter .signText").val(response.value);

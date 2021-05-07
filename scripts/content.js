@@ -327,11 +327,23 @@ var puiObserver = new MutationObserver(async function() {
                 close = true;
             }
         } else if (pui.text().includes("Sign")) {
+            var set;
             if (autoSetterProperties.signText != -1) {
                 pui.hide();
                 var input = pui.find("div input").eq(0);
                 input.val(autoSetterProperties.signText);
                 input[0].dispatchEvent(new Event("input"));
+                set = true;
+            }
+            if (autoSetterProperties.signShowTextMode != -1) {
+                if (!set) pui.hide();
+                var select = pui.find("div select").eq(0);
+                select.val(autoSetterProperties.signShowTextMode);
+                select[0].dispatchEvent(new Event("change"));
+                set = true;
+            }
+            if (set) {
+                await sleep(1);
                 pui.find("div div button.btn-green").eq(0).click();
             }
         }
@@ -339,7 +351,6 @@ var puiObserver = new MutationObserver(async function() {
             pui.find("div.close button").click();
     }
 });
-
 
 async function setFilters(inputs, settings) {
     for (var [index, input] of $.makeArray(inputs).entries()) {
