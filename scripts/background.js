@@ -1,11 +1,15 @@
 "use strict";
 
-// default data
 const defaultData = {
 	makeChatUrlsClickable: true,
 	makeMotdUrlsClickable: true
 };
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function(details) {
+	// open guide page after installation
+	if (details.reason === "install")
+		chrome.tabs.create({url: chrome.extension.getURL("guide.html")});
+
+	// default data
 	for (const [key, value] of Object.entries(defaultData)) {
 		chrome.storage.sync.get(key, function(data) {
 			if (typeof data[key] === "undefined")
