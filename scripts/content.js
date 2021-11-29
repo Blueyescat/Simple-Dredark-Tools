@@ -36,35 +36,6 @@ function escapeHtml(string) {
     });
 }
 
-var theMenu, menuAccountSection,
-    menuAppearance, customizationTable, menuHairButton, menuHairSelect, menuSkinButton, menuBodyButton, menuLegsButton;
-
-function cacheMenuElements() {
-    theMenu = $("#shipyard-left");
-    menuAccountSection = theMenu.find("section :header:contains('Account')").parent().eq(0);
-    menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
-    if (!menuAppearance.length) { // backup
-        menuAppearance = menuAccountSection.find("div p:contains('Customize')").parent().eq(0);
-        if (!menuAppearance.length) // backup 2
-            menuAppearance = theMenu.find("div p:contains('Customize')").parent().eq(0);
-    }
-    customizationTable = menuAppearance.find("table").eq(0);
-
-    customizationTable.find("tr").each(function(index, tr) { 
-        if ($(tr).text().includes("Hair")) {
-            menuHairButton = $(tr).find("button").eq(0);
-            menuHairSelect = $(tr).find("select").eq(0);
-        } else if ($(tr).text().includes("Skin")) {
-            menuSkinButton = $(tr).find("button").eq(0);
-        } else if ($(tr).text().includes("Body")) {
-            menuBodyButton = $(tr).find("button").eq(0);
-        } else if ($(tr).text().includes("Legs")) {
-            menuLegsButton = $(tr).find("button").eq(0);
-        }
-    });
-}
-cacheMenuElements();
-
 async function getUsedPlayerName() {
     var settingsButton = $("#content-bottom button:contains('Settings')");
     if (settingsButton.length) {
@@ -98,120 +69,27 @@ async function getUsedPlayerName() {
     }
 })();
 
-/* Saved outfit buttons */
-function addSavedOutfitElements() {
-    if ($("#savedOutfits").length)
-        return;
-    cacheMenuElements();
-    var container = $("<div/>",
-    {
-        id: "savedOutfits"
-    });
-    for (let i = 0; i < 5; i++) {
-        var btn = $("<button/>",
-        {
-            text: parseInt(i) + 1,
-            css: {
-                "padding": "2px 5px 2px 5px",
-                "margin-bottom": "0"
-            },
-            click: function() { loadSavedOutfit(i); }
-        });
-        btn.attr("data-slot", i);
-        btn.mouseenter(function() {
-            var button = $(this);
-            chrome.runtime.sendMessage({message: "getSavedOutfit", index: button.data("slot")}, function(response) {
-                var tooltip = $("#savedOutfits .sdt-tooltip[data-slot='" + button.data("slot") + "']");
-                var data;
-                if (typeof response.outfit !== "undefined")
-                    data = response.outfit;
-                else
-                    data = "0||#111111||#c99b86||#47a53b||#154479";
-                data = data.split("||");
-                var text = (data[0] == 0 ? "Bald" : "Not Bald") + " - ";
-                text += "<span style='color:" + data[1] + "'>███</span> - ";
-                text += "<span style='color:" + data[2] + "'>███</span> - ";
-                text += "<span style='color:" + data[3] + "'>███</span> - ";
-                text += "<span style='color:" + data[4] + "'>███</span>";
-                tooltip.html(text);
-            });
-        });
-        var tooltip = $("<div/>",
-        {
-            class: "tooltip",
-            text: ""
-        });
-        tooltip.attr("data-slot", i);
-        tooltip.addClass("sdt-tooltip");
-        btn.append(tooltip);
-        container.append(btn);
-    }
-    menuAppearance.append(container);
-}
-/* Saved outfit buttons end */
-
-(async function() {
-    for (let i = 0; i < 32; i++) {
-        addSavedOutfitElements();
-        if ($("#savedOutfits").length)
-            return;
-        await sleep(100);
-    }
-})();
-
-/* // Sometimes Dredark resets the start menu, for example after killed the game
-$(document).mousemove(function() {
-    if (!$("#savedOutfits").length)
-        addSavedOutfitElements();
-}); */
-
-/* Saved outfit buttons */
-async function inputColor(btn, color) {
-    var span = $(btn).parent();
-    btn.click();
-    for (let i = 0; i < 200; i++) {
-        var colorPicker = $(span).find("div.dark.window").eq(0);
-        if (!colorPicker.length) {
-            await sleep(1);
-            continue;
-        }
-        // - color picker found -
-        var clickOutThing = $(span).find("div").filter(function() {
-            return $(this).css("z-index") == "9999"
-        })
-        btn = colorPicker.find("div > label > input[type='color']").eq(0);
-        btn.val(color);
-        btn.get(0).dispatchEvent(new Event("input"));
-        clickOutThing[0].dispatchEvent(new Event("mousedown"))
-        break;
+/* Saved outfits */
+function setInGameOutfit(data, isInGame) {
+    let outfitData = {
+        "color_body": hexColorToInt(data[3]),
+        "color_legs": hexColorToInt(data[4]),
+        "color_hair": hexColorToInt(data[1]),
+        "color_skin": hexColorToInt(data[2]),
+        "style_hair": parseInt(data[0])
+    };
+    if (isInGame) {
+        let wsData = {"type": 6, "outfit": outfitData};
+        window.postMessage({message: "sdt-sendToWs", wsData: msgpack.encode(wsData)}, window.location.origin);
+    } else {
+        let settings = JSON.parse(window.localStorage.getItem("dredark_user_settings"));
+        settings["player_appearance"] = outfitData;
+        window.localStorage.setItem("dredark_user_settings", JSON.stringify(settings));
     }
 }
+/* Saved outfits end */
 
-function inputOutfit(outfit) {
-    var data = outfit.split("||");
-    menuHairSelect.find("option").filter(function() {
-        return $(this).text() == (data[0] == 0 ? "Bald" : "Not Bald");
-    }).prop("selected", true);
-    menuHairSelect.get(0).dispatchEvent(new Event("change"));
-
-    inputColor(menuHairButton, data[1]);
-    inputColor(menuSkinButton, data[2]);
-    inputColor(menuBodyButton, data[3]);
-    inputColor(menuLegsButton, data[4]);
-    window.dispatchEvent(new Event("click"))
-}
-
-function loadSavedOutfit(i) {
-    chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
-		if (typeof response.outfit !== "undefined")
-            inputOutfit(response.outfit);
-        else
-            inputOutfit("0||#111111||#c99b86||#47a53b||#154479");
-	});
-}
-/* Saved outfit buttons end */
-
-/* auto setter start */
+/* Auto setter start */
 var autoSetterEnabled, autoSetterHotkey, autoSetterHotkeyDown,
     autoSetterProperties = {
         cargoHatchMode: -1,
@@ -246,13 +124,13 @@ $(window).on("keydown keyup", function(event) {
 // == properties ==
 (function() {
     const keys = Object.keys(autoSetterProperties);
-    keys.forEach(function(key) {
+    for (const key of keys) {
         chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: key}, function(response) {
             autoSetterProperties[key] = response.value;
             if (key == keys[keys.length - 1])
                 autoSetterPropertiesLoaded();
         });
-    });
+    }
 })();
 
 function autoSetterPropertiesLoaded() {
@@ -442,7 +320,7 @@ puiObserver.observe(pui[0], {
     attributes: true,
     attributeFilter: ["style"]
 });
-/* auto setter end */
+/* Auto setter end */
 
 /* Chat/MOTD stuff start */
 var options = {
@@ -591,7 +469,6 @@ function makeUrlsClickable(text) {
         return `<a href='//${p1}' target='_blank'>${match}</a>`;
     });
 }
-
 /* Chat/MOTD stuff end */
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -639,3 +516,44 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         }
     }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.message == "setInGameOutfit") {
+        setInGameOutfit(request.outfit, isWsReady);
+        sendResponse({isInGame: isWsReady});
+		return true;
+	} else if (request.message == "getOutfitFromStorage") {
+        let data = undefined;
+        const settings = JSON.parse(window.localStorage.getItem("dredark_user_settings"));
+        if (settings) {
+            const aS = settings["player_appearance"];
+            if (aS) {
+                const hairStyle = parseInt(aS.style_hair),
+                    hairColor = intToHexColor(aS.color_hair),
+                    skinColor = intToHexColor(aS.color_skin),
+                    bodyColor = intToHexColor(aS.color_body),
+                    legsColor = intToHexColor(aS.color_legs);
+                data = [hairStyle, hairColor, skinColor, bodyColor, legsColor];
+            }
+        }
+        sendResponse({outfit: data});
+		return true;
+	}
+});
+
+let isWsReady = false;
+window.addEventListener("message", (event) => {
+    if (event.origin !== window.location.origin)
+        return;
+    if (event.data.message == "sdt-wsStatus") {
+        isWsReady = event.data.status;
+    }
+});
+
+function intToHexColor(number){
+    return "#" + (number >>> 0).toString(16).slice(-6);
+}
+
+function hexColorToInt(hex) {
+    return parseInt(hex.substr(1), 16);
+}

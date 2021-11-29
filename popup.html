@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<link rel="stylesheet" href="styles/popup.css">
 		<script type="text/javascript" src="lib/jquery/jquery-3.6.0.min.js"></script>
 	</head>
@@ -13,24 +14,40 @@
 		<div id="tab-1" class="tab-content current">
 			<fieldset id="savedOutfits">
 				<legend><strong>Saved Outfits</strong></legend>
-				<ol>
-					<li class="saved-outfit-slot" data-slot="0">
-						<select class="hair-type pointer" title="Hair type">
+				<div id="outfits">
+					<div class="slots">
+						<div class="outfit-slot pointer" data-slot="0">
+							<img class="add-button pointer" style="display:none" src="images/plus-icon.svg" alt="Add">
+							<img class="edit-button pointer" src="images/edit-icon.svg" alt="Edit">
+							<div class="preview"><canvas width="0" height="0"></canvas></div>
+						</div>
+					</div>
+					<i style="display:block;text-align:center">Click on an outfit to apply it to the game character.</i>
+				</div>
+				<div id="editOutfit" style="display:none;margin-bottom:15px">
+					<button class="back-button pointer">&#8592; Back</button>
+					<h3 style="text-align:center">Editing Outfit #<span class="title-slot"></span></h3>
+					<div class="preview"><canvas width="0" height="0"></canvas></div>
+					<div class="inputs">
+						Hair Style:
+						<select class="hair-type pointer" title="Hair style">
 							<option value="0">Bald</option>
 							<option value="1">Not Bald</option>
 						</select>
-						<input class="color-input hair-color pointer" type="text" value="#111111" title="Hair color">
-						<input class="color-input skin-color pointer" type="text" value="#c99b86" title="Skin color">
-						<input class="color-input body-color pointer" type="text" value="#47a53b" title="Body color">
-						<input class="color-input legs-color pointer" type="text" value="#154479" title="Legs color">
-						<span class="sdt-clear">&#10006;</span>
-					</li>
-				</ol>
-				<div id="colorPicker">
-					<button class="done-button pointer">Choose</button>
-					<button class="cancel-button pointer">&#10006;</button>
-					<br><br>
+						<br>Hair Color: <input class="color-input hair-color pointer" type="text" value="#111111" title="Hair color">
+						<br>Skin Color: <input class="color-input skin-color pointer" type="text" value="#c99b86" title="Skin color">
+						<br>Body Color: <input class="color-input body-color pointer" type="text" value="#47a53b" title="Body color">
+						<br>Legs Color: <input class="color-input legs-color pointer" type="text" value="#154479" title="Legs color">
+					</div>
+					<div id="colorPicker">
+						<button class="done-button pointer">Choose</button>
+						<button class="cancel-button pointer">&#10006;</button>
+						<br><br>
+					</div>
+					<button class="delete-button pointer">Delete Outfit</button>
+					<button class="load-button pointer">Load From Game</button>
 				</div>
+				<div class="info" style="user-select:inherit;margin-top:5px;float:left;width:105%;margin-left:-2.5%"></div>
 			</fieldset>
 		</div><div id="tab-2" class="tab-content">
 			<datalist id="itemNamesList"></datalist>

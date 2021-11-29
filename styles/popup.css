@@ -3,7 +3,7 @@ body {
     color: white;
     font-family: "Segoe UI", Tahoma, sans-serif;
     font-size: 75%;
-    width: 290px;
+    width: 300px;
     user-select: none;
     overflow-y: scroll;
 }
@@ -17,13 +17,106 @@ body {
 }
 #optionsButton:hover { background-color: rgba(255, 255, 255, 0.2); }
 ol { padding-inline-start: 16px; }
+#outfits {
+    width: 100%;
+}
+#outfits .outfit-slot {
+    background: radial-gradient(lightgray, gray);;
+    width: calc(25% - 8px);
+    height: 85px;
+    margin: 4px;
+    float: left;
+    position: relative;
+}
+#outfits .outfit-slot:hover {
+    /* shadow instead of outline because works different on firefox */
+    box-shadow: 0 0 0 1px white;
+}
+#outfits .outfit-slot .edit-button {
+    position: absolute;
+    right: 0;
+}
+#outfits .outfit-slot .add-button {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#outfits .outfit-slot .add-button:hover {
+    padding: 1px;
+    transition: all 0.1s;
+}
+#outfits .outfit-slot .edit-button:hover {
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.445);
+}
+#outfits .outfit-slot .preview canvas {
+    display: block;
+    margin: auto;
+    margin-top: 10px;
+}
+#editOutfit {
+    position: relative;
+}
+#editOutfit .preview {
+    position: absolute;
+    right: 0;
+}
+#editOutfit .back-button {
+    position: absolute;
+    color: white;
+    background-color: transparent;
+    font-weight: bold;
+    border: 2px solid gray;
+    border-radius: 5px;
+}
+#editOutfit .back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+#editOutfit .inputs {
+    margin: auto;
+    width: 60%;
+    padding-left: 20px;
+    padding-right: 20px;
+    line-height: 35px;
+    font-weight: bold;
+}
+#editOutfit .inputs input,
+#editOutfit .inputs select {
+    float: right;
+}
+#editOutfit .delete-button {
+    color: white;
+    background-color: darkred;
+    font-weight: bold;
+    border: 2px solid gray;
+    border-radius: 5px;
+    float: right;
+    margin-top: 20px;
+}
+#editOutfit .delete-button:hover {
+    background-color: rgb(110, 0, 0);
+}
+#editOutfit .load-button {
+    color: white;
+    background-color: transparent;
+    font-weight: bold;
+    border: 2px solid gray;
+    border-radius: 5px;
+    float: left;
+    margin-top: 20px;
+}
+#editOutfit .load-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
 #savedOutfits select {
     width: -moz-max-content;
     width: -webkit-max-content;
-    padding: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     margin: 2px;
 }
-.saved-outfit-slot input.color-input {
+#editOutfit .inputs input.color-input {
     width: 16px;
     height: 15px;
     border: 2px solid gray;
@@ -59,6 +152,9 @@ ol { padding-inline-start: 16px; }
     border: 1px solid gray;
     border-radius: 5px;
 }
+.focused {
+    outline: -webkit-focus-ring-color auto 1px;
+}
 .tui-colorpicker-palette-toggle-slider {
     display: none !important;
 }
@@ -85,8 +181,7 @@ ul.tabs li.current {
     background-color: #ededed;
     color: #222;
 }
-.tab-content { display: none;
-}
+.tab-content { display: none; }
 .tab-content.current { display: inherit; }
 /* tabs end */
 .hotkey { pointer-events: none; }
@@ -125,7 +220,7 @@ input[type="text" i] { padding: 1px 2px; }
 }
 #autoSetter .signText::placeholder {
     font-style: italic;
-    background: lightgray;
+    background-color: lightgray;
 }
 #autoSetter button { cursor: pointer; }
 #autoSetter .filters input[type="text"] {
@@ -142,13 +237,13 @@ input[type="text" i] { padding: 1px 2px; }
 #autoSetter ol {
     margin: 0;
 }
-.info span {
+#autoSetter .info span {
     color: lightblue;
     text-decoration: underline;
     cursor: help;
     font-size: 105%;
 }
-.info .box {
+#autoSetter .info .box {
     visibility: hidden;
     opacity: 0;
     background-color: white;
@@ -162,7 +257,7 @@ input[type="text" i] { padding: 1px 2px; }
     transition: opacity 0.2s;
     z-index: 1000;
 }
-.info:hover .box {
+#autoSetter .info:hover .box {
     visibility: visible;
     opacity: 1;
 }

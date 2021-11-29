@@ -7,13 +7,20 @@
   "options_page": "options.html",
   "web_accessible_resources": [
     "styles/content.css",
-    "sfx/beep.mp3"
+    "sfx/beep.mp3",
+    "scripts/wshook.js"
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.drednot.io/*", "*://*.drednot.net/*", "*://*.drednot.com/*"],
-      "js": ["lib/jquery/jquery-3.6.0.min.js", "scripts/content.js"],
+      "matches": ["*://*.drednot.io/*"],
+      "js": ["lib/jquery/jquery-3.6.0.min.js", "lib/msgpackjs/msgpack.min.js", "scripts/content.js"],
       "css": ["styles/content.css"],
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.drednot.io/*"],
+      "js": ["scripts/document_start.js"],
+      "run_at" : "document_start",
       "all_frames": true
     }
   ],

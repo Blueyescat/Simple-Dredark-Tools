@@ -32,111 +32,303 @@ $(document).ready(function() {
 	});
 });
 
-/* color picker */
-var selectedInput;
+const colorPicker = (() => {
+	let selectedInput;
+	const picker = tui.colorPicker.create({
+		container: document.getElementById("colorPicker"),
+		preset: ["#111111", "#c99b86", "#47a53b", "#154479", "#ffffff", "#000000"],
+		usageStatistics: false
+	});
 
-var picker = tui.colorPicker.create({
-	container: document.getElementById("colorPicker"),
-	preset: ["#111111", "#c99b86", "#47a53b", "#154479", "#ffffff", "#000000"],
-	usageStatistics: false
-});
-
-$("#colorPicker .tui-colorpicker-palette-toggle-slider").click();
-$("#colorPicker").hide();
-
-$(".color-input").on("mousedown", function(event) {
-	event.preventDefault();
-});
-
-$(".color-input").on("click", function(event) {
-    event.preventDefault();
-	selectedInput = $(this);
-	picker.setColor($(this).val());
-	$("#colorPicker").show();
-	return false;
-});
-
-$(document).mousedown(function(e) {
-    var container = $("#colorPicker");
-    if (container.is(":visible") && !container.is(e.target) && container.has(e.target).length === 0) {
-		/* selectedInput.attr("value", picker.getColor());
-		selectedInput.css("background-color", selectedInput.attr("value"));
-		selectedInput.change(); */
-		container.hide();
-		selectedInput = undefined;
-    }
-});
-
-$("#colorPicker .done-button").on("click", function(event) {
-	selectedInput.attr("value", picker.getColor());
-    selectedInput.css("background-color", selectedInput.attr("value"));
-	selectedInput.change();
+	$("#colorPicker .tui-colorpicker-palette-toggle-slider").click();
 	$("#colorPicker").hide();
-	selectedInput = undefined;
-});
 
-$("#colorPicker .cancel-button").on("click", function(event) {
-	$("#colorPicker").hide();
-	selectedInput = undefined;
-});
-/* color picker end */
+	$(".color-input").on("mousedown", function(event) {
+		event.preventDefault();
+	});
 
-for (let i = 0; i < 5; i++) {
-	chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
-		if (typeof response.outfit !== "undefined") {
-			var data = response.outfit.split("||");
-			$(".saved-outfit-slot[data-slot='" + i + "'] .hair-type").val(data[0]);
-			$(".saved-outfit-slot[data-slot='" + i + "'] .hair-color").attr("value", data[1]);
-			$(".saved-outfit-slot[data-slot='" + i + "'] .skin-color").attr("value", data[2]);
-			$(".saved-outfit-slot[data-slot='" + i + "'] .body-color").attr("value", data[3]);
-			$(".saved-outfit-slot[data-slot='" + i + "'] .legs-color").attr("value", data[4]);
+	$(".color-input").on("click", function(event) {
+		event.preventDefault();
+		selectedInput = $(this);
+		selectedInput.addClass("focused");
+		picker.setColor(selectedInput.val());
+		$("#colorPicker").show();
+		return false;
+	});
+
+	$(document).mousedown(function(e) {
+		let container = $("#colorPicker");
+		if (container.is(":visible") && !container.is(e.target) && container.has(e.target).length === 0) {
+			/* selectedInput.attr("value", picker.getColor());
+			selectedInput.css("background-color", selectedInput.attr("value"));
+			selectedInput.change(); */
+			container.hide();
+			selectedInput.removeClass("focused");
+			selectedInput = undefined;
 		}
-		if (i == 4)
-			colorLabels();
 	});
-}
 
-$("#savedOutfits span.sdt-clear").on("click", function() {
-	var li = $(this).parent();
-	li.find(".hair-type").val(0);
-	li.find(".hair-color").attr("value", "#111111");
-	li.find(".skin-color").attr("value", "#c99b86");
-	li.find(".body-color").attr("value", "#47a53b");
-	li.find(".legs-color").attr("value", "#154479").change();
-	colorLabels();
-});
-
-function outfitChanged(slot) {
-	var hairType = $(".saved-outfit-slot[data-slot='" + slot + "'] .hair-type").eq(0).val();
-	var hairColor = $(".saved-outfit-slot[data-slot='" + slot + "'] .hair-color").eq(0).attr("value");
-	var skinColor = $(".saved-outfit-slot[data-slot='" + slot + "'] .skin-color").eq(0).attr("value");
-	var bodyColor = $(".saved-outfit-slot[data-slot='" + slot + "'] .body-color").eq(0).attr("value");
-	var legsColor = $(".saved-outfit-slot[data-slot='" + slot + "'] .legs-color").eq(0).attr("value");
-	var data = hairType + "||" + hairColor + "||" + skinColor + "||" + bodyColor + "||" + legsColor;
-	chrome.runtime.sendMessage({message: "setSavedOutfit", index: slot, outfit: data});
-}
-
-$(".saved-outfit-slot select").on("change", function() {
-	outfitChanged($(this).parent().data("slot"));
-});
-$(".saved-outfit-slot input").on("change", function() {
-	outfitChanged($(this).parent().data("slot"));
-});
-
-
-for (let i = 0; i < 4; i++) {
-	$(".saved-outfit-slot[data-slot='0']").eq(0).clone(true).attr("data-slot", i+1).appendTo("#savedOutfits ol");
-}
-
-$("input[type='color']").on("input change", function() {
-	$(this).parent().css("background-color", $(this).val());
-});
-
-function colorLabels() {
-	$(".color-input").each(function() {
-		$(this).css("background-color", $(this).val());
+	$("#colorPicker .done-button").on("click", function(event) {
+		selectedInput.attr("value", picker.getColor());
+		selectedInput.css("background-color", selectedInput.attr("value"));
+		selectedInput.change();
+		$("#colorPicker").hide();
+		selectedInput.removeClass("focused");
+		selectedInput = undefined;
 	});
-}
+
+	$("#colorPicker .cancel-button").on("click", function(event) {
+		$("#colorPicker").hide();
+		selectedInput.removeClass("focused");
+		selectedInput = undefined;
+	});
+})();
+
+const savedOutfits = (() => {
+	const slotAmount = 8;
+	const characterImageFiles = {
+		body: "player.png",
+		arm: "player_arm.png",
+		face: "player_face.png",
+		foot: "player_foot.png",
+		hair: "player_hair.png",
+		hand: "player_hand.png",
+		head: "player_head.png",
+		leg: "player_leg.png"
+	};
+	const characterPreviewParts = [
+		{file: "hand", colorSource: "skin", x: 15, y: -8},
+		{file: "leg", colorSource: "legs", x: 17.5, y: 5.8},
+		{file: "leg", colorSource: "legs", x: 21.5, y: 5.8},
+		{file: "body", colorSource: "body", x: 18, y: 6},
+		{file: "head", colorSource: "skin", x: 0, y: -2},
+		{file: "hair", colorSource: "hair", x: 12.5, y: -2.5},
+		{file: "face", colorSource: "", x: 0, y: -2},
+		{file: "arm", colorSource: "body", x: 21.5, y: -8},
+		{file: "hand", colorSource: "skin", x: 21.5, y: -8},
+		{file: "foot", colorSource: "", x: 17.5, y: 5.5},
+		{file: "foot", colorSource: "", x: 21.5, y: 5.5}
+	];
+
+	let characterImages = {};
+	async function loadCharacterImages() {
+		for await (const name of Object.keys(characterImageFiles)) {
+			const img = new Image();
+			img.onload = () => {
+				characterImages[name] = img;
+			};
+			img.src = "../images/" + characterImageFiles[name];
+		}
+	}
+
+	function drawCharacterPreview(canvas, options) {
+		canvas.width = 50;
+		canvas.height = 75;
+		characterPreviewParts.forEach(async part => {
+			if (options.hairStyle == 0 && part.colorSource == "hair") {
+				return;
+			}
+			const color = options.colors[part.colorSource];
+			const ctx = canvas.getContext("2d");
+			const img = characterImages[part.file];
+			if (part.colorSource != "") {
+				const c = document.createElement("canvas");
+				c.width = img.naturalWidth;
+				c.height = img.naturalHeight;
+				const cCtx = c.getContext("2d");
+				cCtx.drawImage(img, 0, 0);
+	
+				cCtx.fillStyle = color;
+				cCtx.globalCompositeOperation = "multiply";
+				cCtx.fillRect(0, 0, c.width, c.height);
+	
+				cCtx.globalCompositeOperation = "destination-in";
+				cCtx.drawImage(img, 0, 0);
+				cCtx.globalCompositeOperation = "source-over";
+				ctx.drawImage(c, part.x, part.y);
+			} else {
+				ctx.drawImage(img, part.x, part.y);
+			}
+		});
+	}
+
+	function showInfo(content, type, ms) {
+		let currentDivs = $("#savedOutfits .info div");
+		if (currentDivs.length == 5) {
+			currentDivs.first().remove();
+		}
+		let div = $("<div>", {style: "border-radius:5px;font-size:14px;padding:5px;display:none"});
+		if (type == "error") {
+			div.css("background-color", "rgba(220, 53, 69, 1)");
+		} else if (type == "warning") {
+			div.css({"background-color": "rgba(255, 193, 7, 1)", "color": "black"});
+		} else if (type == "success") {
+			div.css("background-color", "rgba(40, 167, 69, 1)");
+		}
+		div.text(content);
+		$("#savedOutfits .info").prepend(div);
+		div.slideDown(300);
+		setTimeout(() => div.slideUp(300, () => div.remove()), ms);
+	}
+	
+	(async () => {
+		await loadCharacterImages();
+		for (let i = 0; i < slotAmount; i++) {
+			if (i != slotAmount - 1) {
+				$(".outfit-slot[data-slot='0']").eq(0).clone(true).attr("data-slot", i + 1).appendTo("#outfits .slots");
+			}
+			chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
+				if (typeof response.outfit !== "undefined") {
+					let data = response.outfit.split("||");
+					updatePreview($(`.outfit-slot[data-slot='${i}'] .preview canvas`), data[0], data[1], data[2], data[3], data[4]);
+				} else {
+					toggleAddButton($(`.outfit-slot[data-slot='${i}']`), true);
+				}
+			});
+		}
+	})();
+
+	function updatePreview(selector, hairStyle, hairColor, skinColor, bodyColor, legsColor) {
+		let options = {
+			hairStyle: hairStyle,
+			colors: {
+				hair: hairColor,
+				skin: skinColor,
+				body: bodyColor,
+				legs: legsColor
+			}
+		};
+		selector.each(function() {
+			drawCharacterPreview(this, options);
+		});
+	}
+	function toggleAddButton(el, on) {
+		el.find(".edit-button").toggle(!on);
+		el.find(".add-button").toggle(on);
+	}
+
+	let editingOutfit;
+	$(".outfit-slot .edit-button, .outfit-slot .add-button").on("click", function() {
+		editingOutfit = parseInt($(this).parent().attr("data-slot"));
+		$("#editOutfit .title-slot").text(parseInt(editingOutfit) + 1);
+		$("#outfits").hide();
+		chrome.runtime.sendMessage({message: "getSavedOutfit", index: editingOutfit}, function(response) {
+			let data;
+			if (typeof response.outfit !== "undefined")
+				data = response.outfit;
+			else
+				data = "0||#111111||#c99b86||#47a53b||#154479";
+			data = data.split("||");
+			loadOutfitToInputs(data);
+		});
+		$("#editOutfit").show();
+		if ($(this).hasClass("add-button")) {
+			outfitChanged();
+		}
+	});
+	
+	function loadOutfitToInputs(data) {
+		let inputs = $("#editOutfit .inputs");
+		inputs.find(".hair-type").val(data[0]);
+		inputs.find(".hair-color").attr("value", data[1]);
+		inputs.find(".skin-color").attr("value", data[2]);
+		inputs.find(".body-color").attr("value", data[3]);
+		inputs.find(".legs-color").attr("value", data[4]);
+		updatePreview($(`#editOutfit .preview canvas`), data[0], data[1], data[2], data[3], data[4]);
+		colorLabels();
+	}
+
+	let outfitCooldown;
+	$(".outfit-slot").on("click", function(event) {
+		if (outfitCooldown) {
+			showInfo("You can't change outfit that fast", "error", 2800);
+			return;
+		}
+		if ($(event.target).is(".edit-button, .add-button")) return;
+		const slot = parseInt($(this).attr("data-slot"));
+		chrome.runtime.sendMessage({message: "getSavedOutfit", index: slot}, async function(response) {
+			if (typeof response.outfit !== "undefined") {
+				let data = response.outfit.split("||");
+				await chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					chrome.tabs.sendMessage(tabs[0].id, {message: "setInGameOutfit", outfit: data}, function(response) {
+						if (chrome.runtime.lastError) {
+							showInfo("No Dredark game in the current browser tab", "error", 3000);
+							return;
+						} else if (!response.isInGame) {
+							showInfo("Outfit successfully changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5500);
+							return;
+						}
+						showInfo("Outfit successfully changed", "success", 2000);
+						outfitCooldown = true;
+						setTimeout(() => outfitCooldown = undefined, 1000);
+					});  
+				});
+			}
+		});
+	});
+
+	$("#editOutfit .back-button").on("click", function() {
+		editingOutfit = undefined;
+		$("#editOutfit").hide();
+		$("#outfits").show();
+	});
+
+	$("#editOutfit .delete-button").on("click", function() {
+		chrome.runtime.sendMessage({message: "setSavedOutfit", index: editingOutfit, outfit: undefined});
+		const outfitSlot = $(`.outfit-slot[data-slot='${editingOutfit}']`);
+		toggleAddButton(outfitSlot, true);
+		const canvas = outfitSlot.find(".preview canvas")[0];
+		canvas.width = canvas.height = 0;
+		showInfo(`Successfully deleted outfit #${editingOutfit + 1}`, "success", 2500);
+		editingOutfit = undefined;
+		$("#editOutfit").hide();
+		$("#outfits").show();
+	});
+
+	$("#editOutfit .load-button").on("click", function() {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {message: "getOutfitFromStorage"}, function(response) {
+				if (chrome.runtime.lastError) {
+					showInfo("No Dredark game in the current browser tab", "error", 4000);
+					return;
+				}
+				if (typeof response.outfit !== "undefined") {
+					loadOutfitToInputs(response.outfit);
+					showInfo("Successfully loaded outfit from the game", "success", 3000);
+					outfitChanged();
+				} else {
+					showInfo("Could not get outfit from the game", "error", 3000);
+				}
+			});
+		});
+	});
+	
+	function outfitChanged() {
+		const hairStyle = $("#editOutfit .inputs .hair-type").eq(0).val(),
+			hairColor = $("#editOutfit .inputs .hair-color").eq(0).attr("value"),
+			skinColor = $("#editOutfit .inputs .skin-color").eq(0).attr("value"),
+			bodyColor = $("#editOutfit .inputs .body-color").eq(0).attr("value"),
+			legsColor = $("#editOutfit .inputs .legs-color").eq(0).attr("value");
+		toggleAddButton($(`.outfit-slot[data-slot='${editingOutfit}']`), false);
+		updatePreview($(`.outfit-slot[data-slot='${editingOutfit}'] .preview canvas, #editOutfit .preview canvas`), hairStyle, hairColor, skinColor, bodyColor, legsColor);
+		chrome.runtime.sendMessage({message: "setSavedOutfit", index: editingOutfit, outfit: [hairStyle, hairColor, skinColor, bodyColor, legsColor].join("||")});
+	}
+	
+	$("#editOutfit .inputs select, #editOutfit .inputs input").on("change", function() {
+		outfitChanged();
+	});
+	
+	$("input[type='color']").on("input change", function() {
+		$(this).parent().css("background-color", $(this).val());
+	});
+	
+	function colorLabels() {
+		$(".color-input").each(function() {
+			$(this).css("background-color", $(this).val());
+		});
+	}
+})();
+
 
 /* auto setter start */
 // == main ==

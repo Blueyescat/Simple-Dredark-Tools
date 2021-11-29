@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 	else if (request.message == "setSavedOutfit") {
 		var key = "savedOutfit-" + request.index;
-		if (request.outfit == "0||#111111||#c99b86||#47a53b||#154479")
+		if (typeof request.outfit === "undefined")
 			chrome.storage.sync.remove([key]);
 		else
 			chrome.storage.sync.set({[key]: request.outfit});
