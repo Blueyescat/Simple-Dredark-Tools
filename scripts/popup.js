@@ -56,9 +56,9 @@ const colorPicker = (() => {
 		return false;
 	});
 
-	$(document).mousedown(function(e) {
+	$(document).mousedown(function(event) {
 		let container = $("#colorPicker");
-		if (container.is(":visible") && !container.is(e.target) && container.has(e.target).length === 0) {
+		if (container.is(":visible") && !container.is(event.target) && container.has(event.target).length === 0) {
 			/* selectedInput.attr("value", picker.getColor());
 			selectedInput.css("background-color", selectedInput.attr("value"));
 			selectedInput.change(); */

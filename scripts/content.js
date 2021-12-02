@@ -60,7 +60,7 @@ async function getUsedPlayerName() {
     }
 }
 
-(async function() {
+(async () => {
     for (let i = 0; i < 32; i++) {
         await sleep(150);
         await getUsedPlayerName();
@@ -122,7 +122,7 @@ $(window).on("keydown keyup", function(event) {
 });
 
 // == properties ==
-(function() {
+(() => {
     const keys = Object.keys(autoSetterProperties);
     for (const key of keys) {
         chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: key}, function(response) {
@@ -345,7 +345,7 @@ function setChatHighlighterRegex(texts) {
     regexChatHighligherAlts = new RegExp(alts, "gi");
 }
 
-(function() {
+(() => {
     const keys = Object.keys(options);
     for (const key of keys) {
         chrome.runtime.sendMessage({message: "getValueOf", key: key}, function(response) {
@@ -403,14 +403,14 @@ function handleNewMessages() {
             // replace text nodes
             if (options.makeChatUrlsClickable) {
                 elements.contents().filter(function() {
-                    return this.nodeType == 3;
+                    return this.nodeType == Node.TEXT_NODE;
                 }).replaceWith(function() {
                     return makeUrlsClickable(escapeHtml($(this).text()));
                 });
             }
             var anyHighlight;
             elements.contents().filter(function() {
-                return this.nodeType == 3;
+                return this.nodeType == Node.TEXT_NODE;
             }).replaceWith(function() {
                 var content = $(this).text();
                 if (messageType == "system") {
@@ -422,7 +422,7 @@ function handleNewMessages() {
                 if (options.chatHighlighterState && messageSender != window.sessionStorage["sdt-usedPlayerName"]) {
                     content = content.replace(regexChatHighligherAlts, function(match) {
                         highlightApplied = true;
-                        return "<span class='sdt-highlight'>" + match + "</span>";
+                        return `<span class="sdt-highlight">${match}</span>`;
                     });
                     if (highlightApplied) anyHighlight = true;
                 }
@@ -439,12 +439,10 @@ function handleNewMessages() {
     });
 }
 
-var chatContentObserver = new MutationObserver(function() {
-    handleNewMessages();
-});
+var chatContentObserver = new MutationObserver(handleNewMessages);
 function startChatObserver() {
     handleNewMessages();
-    chatContentObserver.observe(chatContent[0], { childList: true });
+    chatContentObserver.observe(chatContent[0], {childList: true});
 }
 
 // motd
@@ -460,13 +458,13 @@ var motdTextObserver = new MutationObserver(function() {
 function startMotdObserver() {
     motdTextObserver.observe(motdText[0], { childList: true });
 }
-$("#motd-text, #chat").on("focus", "a", function(e) {
+$("#motd-text, #chat").on("focus", "a", function() {
     $(this).blur();
 });
 
 function makeUrlsClickable(text) {
     return text.replace(regexUrl, function(match, p1) {
-        return `<a href='//${p1}' target='_blank'>${match}</a>`;
+        return `<a href="//${p1}" target="_blank">${match}</a>`;
     });
 }
 /* Chat/MOTD stuff end */
