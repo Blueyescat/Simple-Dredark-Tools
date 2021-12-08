@@ -231,70 +231,68 @@ var puiObserver = new MutationObserver(async function() {
 });
 
 async function setFilters(inputs, settings) {
-    for (var [index, input] of $.makeArray(inputs).entries()) {
-        if (settings[index].state == true) {
-            var nameSetting = settings[index].name.toLowerCase().trim();
-            if (nameSetting == "") nameSetting = "no item";
-            input.dispatchEvent(new Event("focus"));
-            for (let i = 0; i < 500; i++) {
-                var itemPicker = $(input).parent().find(".item-picker");
-                if (!itemPicker.length) {
-                    await sleep(1);
-                    continue;
-                }
-                // - item picker found -
-                var items = itemPicker.find("div span");
-                var selected = undefined;
-                if (!nameSetting.includes("(") && !nameSetting.includes(")")) {
-                    for (let item of items) {
-                        var itemName = $(item).text().toLowerCase().replace(regexItemBrackets, "");
-                        if (itemName == nameSetting) {
-                            $(item).parent()[0].dispatchEvent(new Event("mousedown"));
-                            input.dispatchEvent(new Event("blur"));
-                            for (let i = 0; i < 500; i++) {
-                                if ($(input).val() == $(item).text())
-                                    break;
-                                await sleep(1);
-                            }
-                            selected = true;
-                            break;
-                        }
-                    };
-                    if (!selected) {
-                        for (let item of items) {
-                            var itemName = $(item).text().toLowerCase().replace(regexItemBrackets, "");
-                            if (itemName.endsWith(nameSetting) || itemName.startsWith(nameSetting)) {
-                                $(item).parent()[0].dispatchEvent(new Event("mousedown"));
-                                input.dispatchEvent(new Event("blur"));
-                                for (let i = 0; i < 500; i++) {
-                                    if ($(input).val() == $(item).text())
-                                        break;
-                                    await sleep(1);
-                                }
-                                selected = true;
-                                break;
-                            }
-                        };
-                    }
-                }
-                if (!selected) {
-                    for (let item of items) {
-                        var itemName = $(item).text().toLowerCase();
-                        if (itemName == nameSetting || itemName.includes(nameSetting)) {
-                            $(item).parent()[0].dispatchEvent(new Event("mousedown"));
-                            input.dispatchEvent(new Event("blur"));
-                            for (let i = 0; i < 500; i++) {
-                                if ($(input).val() == $(item).text())
-                                    break;
-                                await sleep(1);
-                            }
-                            selected = true;
-                            break;
-                        }
-                    };
-                }
+    for (const [index, input] of $.makeArray(inputs).entries()) {
+        if (settings[index].state != true) continue;
+        let nameSetting = settings[index].name.toLowerCase().trim();
+        if (nameSetting == "") nameSetting = "no item";
+        if (nameSetting == "fuel") nameSetting = "thruster fuel";
+        input.dispatchEvent(new Event("focus"));
+        for (let i = 0; i < 500; i++) {
+            let itemPicker = $(input).parent().find(".item-picker");
+            if (itemPicker.length) {
+                await pickItem(input, itemPicker, nameSetting);
                 break;
             }
+            await sleep(1);
+        }
+    }
+
+    async function pickItem(input, itemPicker, filter) {
+        const items = itemPicker.find("div span");
+        const itemNames = items.map(function() {
+            return $(this).text().toLowerCase();
+        }).get();
+        let selectedIndex = undefined;
+        itemNames.some((name, i) => {
+            if (name == filter) {
+                selectedIndex = i; return true;
+            }
+        });
+        if (!selectedIndex) {
+            itemNames.some((name, i) => {
+                name = name.replace(regexItemBrackets, "");
+                if (name == filter) {
+                    selectedIndex = i; return true;
+                }
+            });
+        }
+        if (!selectedIndex) {
+            itemNames.some((name, i) => {
+                name = name.replace(regexItemBrackets, "");
+                if (name.endsWith(filter) || name.startsWith(filter)) {
+                    selectedIndex = i; return true;
+                }
+            });
+        }
+        if (!selectedIndex) {
+            itemNames.some((name, i) => {
+                if (name.includes(filter)) {
+                    selectedIndex = i; return true;
+                }
+            });
+        }
+        if (selectedIndex != undefined) {
+            select(input, items.eq(selectedIndex));
+        }
+    }
+
+    async function select(input, item) {
+        item.parent()[0].dispatchEvent(new Event("mousedown"));
+        input.dispatchEvent(new Event("blur"));
+        for (let i = 0; i < 500; i++) {
+            if ($(input).val() == item.text())
+                break;
+            await sleep(1);
         }
     }
 }
