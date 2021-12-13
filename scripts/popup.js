@@ -201,13 +201,17 @@ const savedOutfits = (() => {
 
 	let characterImages = {};
 	async function loadCharacterImages() {
-		for await (const name of Object.keys(characterImageFiles)) {
-			const img = new Image();
-			img.onload = () => {
-				characterImages[name] = img;
-			};
-			img.src = "../images/" + characterImageFiles[name];
+		for (const name of Object.keys(characterImageFiles)) {
+			characterImages[name] = await loadImage("../images/" + characterImageFiles[name])
 		}
+	}
+
+	function loadImage(url) {
+		return new Promise(resolve => {
+			const img = new Image();
+			img.onload = () => { resolve(img); };
+			img.src = url;
+		});
 	}
 
 	function drawCharacterPreview(canvas, options) {
