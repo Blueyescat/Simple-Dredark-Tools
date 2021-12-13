@@ -7,7 +7,7 @@
   "options_page": "options.html",
   "web_accessible_resources": [
     {
-      "matches": ["*://*.drednot.io/"],
+      "matches": ["*://*.drednot.io/*"],
       "resources": [
         "styles/content.css",
         "sfx/beep.mp3",

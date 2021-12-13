@@ -544,6 +544,9 @@ async function fetchAccountInfo(cache) {
                 info = {};
                 info.name = json.account.name;
                 info.isRegistered = json.account.is_registered == true;
+            } else if (json.account === null) {
+                info = {};
+                info.noAccount = true;
             }
         })
         .catch(() => {});

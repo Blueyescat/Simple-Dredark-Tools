@@ -347,10 +347,13 @@ const savedOutfits = (() => {
 					if (chrome.runtime.lastError) {
 						showInfo("No Dredark game in the current browser tab", "error", 3000);
 						return;
+					} else if (accountInfo && accountInfo.noAccount) {
+						showInfo("You are not logged into a Dredark account", "error", 3000);
+						return;
 					} else if (accountInfo && !accountInfo.isRegistered) {
 						showInfo("Anonymous Dredark accounts cannot change character appearance", "error", 3500);
 						return;
-					} // ignore if account info doesn't exist / couldn't get
+					} // ignore if no account info
 					chrome.tabs.sendMessage(tabs[0].id, {message: "setInGameOutfit", outfit: data}, function(response) {
 						if (!response.isInGame) {
 							showInfo("Outfit changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5000);
