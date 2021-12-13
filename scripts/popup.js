@@ -336,23 +336,28 @@ const savedOutfits = (() => {
 		if ($(event.target).is(".edit-button, .add-button")) return;
 		const slot = parseInt($(this).attr("data-slot"));
 		chrome.runtime.sendMessage({message: "getSavedOutfit", index: slot}, async function(response) {
-			if (typeof response.outfit !== "undefined") {
-				let data = response.outfit.split("||");
-				await chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			if (typeof response.outfit === "undefined") return;
+			let data = response.outfit.split("||");
+			await chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {message: "getAccountInfo", useCache: true}, function(accountInfo) {
+					if (chrome.runtime.lastError) {
+						showInfo("No Dredark game in the current browser tab", "error", 3000);
+						return;
+					} else if (accountInfo && !accountInfo.isRegistered) {
+						showInfo("Anonymous Dredark accounts cannot change character appearance", "error", 3500);
+						return;
+					} // ignore if account info doesn't exist / couldn't get
 					chrome.tabs.sendMessage(tabs[0].id, {message: "setInGameOutfit", outfit: data}, function(response) {
-						if (chrome.runtime.lastError) {
-							showInfo("No Dredark game in the current browser tab", "error", 3000);
-							return;
-						} else if (!response.isInGame) {
-							showInfo("Outfit changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5500);
+						if (!response.isInGame) {
+							showInfo("Outfit changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5000);
 							return;
 						}
 						showInfo("Outfit successfully changed", "success", 2000);
 						outfitCooldown = true;
 						setTimeout(() => outfitCooldown = undefined, 1000);
-					});  
+					});
 				});
-			}
+			});
 		});
 	});
 

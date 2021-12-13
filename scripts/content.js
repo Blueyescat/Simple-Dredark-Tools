@@ -12,62 +12,9 @@ sfxBeep.loop = false;
 
 var styleAllowInteractingChatAnchors = $("<style>#chat.closed a { pointer-events: auto !important; }</style>");
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+let sdtData = {
+    accountInfo: null
 }
-
-function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-const htmlEntityMap = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;",
-    "/": "&#x2F;",
-    "`": "&#x60;",
-    "=": "&#x3D;"
-};
-function escapeHtml(string) {
-    return string.replace(regexHtmlEntities, function (s) {
-        return htmlEntityMap[s];
-    });
-}
-
-async function getUsedPlayerName() {
-    var settingsButton = $("#content-bottom button:contains('Settings')");
-    if (settingsButton.length) {
-        settingsButton.click();
-        var settingsMenu = $("#new-ui-left div:visible");
-        settingsMenu.hide();
-        var accountSection = settingsMenu.find("section :header:contains('Account')").parent().eq(0);
-        await sleep(10);
-        var pUsername = accountSection.find("p:contains('Username')")
-        var playerName = "";
-        if (pUsername.length) {
-            playerName = pUsername.find("code").eq(0).text();
-            if (playerName.length > 1)
-                window.sessionStorage["sdt-usedPlayerName"] = playerName;
-        } else {
-            var pDiscriminator = accountSection.find("p:contains('Discriminator')")
-            playerName = pDiscriminator.find("code").eq(0).text();
-            if (playerName.length > 1)
-                window.sessionStorage["sdt-usedPlayerName"] = playerName;
-        }
-        settingsButton.click();
-    }
-}
-
-(async () => {
-    for (let i = 0; i < 32; i++) {
-        await sleep(150);
-        await getUsedPlayerName();
-        if (window.sessionStorage["sdt-usedPlayerName"])
-            return;
-    }
-})();
 
 /* Saved outfits */
 function setInGameOutfit(data, isInGame) {
@@ -82,7 +29,9 @@ function setInGameOutfit(data, isInGame) {
         let wsData = {"type": 6, "outfit": outfitData};
         window.postMessage({message: "sdt-sendToWs", wsData: msgpack.encode(wsData)}, window.location.origin);
     } else {
-        let settings = JSON.parse(window.localStorage.getItem("dredark_user_settings"));
+        let settings;
+        try { settings = JSON.parse(window.localStorage.getItem("dredark_user_settings")); }
+        catch { settings = {} };
         settings["player_appearance"] = outfitData;
         window.localStorage.setItem("dredark_user_settings", JSON.stringify(settings));
     }
@@ -417,7 +366,7 @@ function handleNewMessages() {
                 }
                 content = escapeHtml(content);
                 var highlightApplied;
-                if (options.chatHighlighterState && messageSender != window.sessionStorage["sdt-usedPlayerName"]) {
+                if (options.chatHighlighterState && (sdtData.accountInfo && messageSender != sdtData.accountInfo.name)) {
                     content = content.replace(regexChatHighligherAlts, function(match) {
                         highlightApplied = true;
                         return `<span class="sdt-highlight">${match}</span>`;
@@ -514,13 +463,21 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message == "setInGameOutfit") {
+    if (request.message == "getAccountInfo") {
+        if (request.useCache && sdtData.accountInfo) {
+            sendResponse(sdtData.accountInfo);
+            return true;
+        }
+        fetchAccountInfo(true).then(sendResponse);
+        return true;
+    } else if (request.message == "setInGameOutfit") {
         setInGameOutfit(request.outfit, isWsReady);
         sendResponse({isInGame: isWsReady});
 		return true;
 	} else if (request.message == "getOutfitFromStorage") {
         let data = undefined;
-        const settings = JSON.parse(window.localStorage.getItem("dredark_user_settings"));
+        let settings;
+        try { settings = JSON.parse(window.localStorage.getItem("dredark_user_settings")); } catch {}
         if (settings) {
             const aS = settings["player_appearance"];
             if (aS) {
@@ -553,3 +510,46 @@ function intToHexColor(number){
 function hexColorToInt(hex) {
     return parseInt(hex.substr(1), 16);
 }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const htmlEntityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;"
+};
+function escapeHtml(string) {
+    return string.replace(regexHtmlEntities, function (s) {
+        return htmlEntityMap[s];
+    });
+}
+
+async function fetchAccountInfo(cache) {
+	let info = null;
+	await fetch(`${window.location.protocol}//${window.location.host}/account/status`)
+        .then(res => res.json())
+        .then(json => {
+            if (json.account) {
+                info = {};
+                info.name = json.account.name;
+                info.isRegistered = json.account.is_registered == true;
+            }
+        })
+        .catch(() => {});
+    if (cache) {
+        sdtData.accountInfo = info;
+    }
+    return info;
+}
+fetchAccountInfo(true);
