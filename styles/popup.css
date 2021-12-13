@@ -162,7 +162,7 @@ ol { padding-inline-start: 16px; }
     color: red;
     cursor: pointer;
 }
-/* tabs */
+/* tabs start */
 ul.tabs {
     margin: 0px;
     padding: 0px;
@@ -261,6 +261,26 @@ input[type="text" i] { padding: 1px 2px; }
     visibility: visible;
     opacity: 1;
 }
+/* autoCompleter start */
+#autoCompleter {
+    position: absolute;
+    background-color: white;
+    color: black;
+    max-height: 121px;
+    overflow-y: scroll;
+    border: 1px solid black;
+}
+#autoCompleter .option {
+    padding: 2px 5px;
+}
+#autoCompleter .option:hover {
+    background-color: lightgray;
+}
+#autoCompleter .option.selected {
+    background-color: #26A0DA;
+    color: white;
+}
+/* autoCompleter end */
 /* arrows */
 .arrow {
     border: solid black;

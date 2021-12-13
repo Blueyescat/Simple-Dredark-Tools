@@ -32,6 +32,95 @@ $(document).ready(function() {
 	});
 });
 
+/* auto completer start */
+const itemNamesList = ["Auto Turret (Packaged)", "Backpack", "Basketball", "Beach Ball", "Block", "BoM Scanner", "Booster Boots", "Booster Fuel (High Grade)", "Booster Fuel (Low Grade)", "Burst Turret (Packaged)", "Cargo Ejector (Packaged)", "Cargo Hatch (Packaged)", "Comms Station (Packaged)", "Construction Gauntlets", "Door (Packaged)", "Expando Box (Basic, Packaged)", "Explosives", "Fabricator (Engineering, Packaged)", "Fabricator (Equipment, Packaged)", "Fabricator (Legacy, Packaged)", "Fabricator (Machine, Packaged)", "Fabricator (Munitions, Packaged)", "Flak Ammo", "Flux Crystals", "Football", "Freeport Anchor", "Golden Basketball", "Golden Item Shredder", "Golden Volleyball", "Handheld Pusher", "Helm (Packaged)", "Hover Pack", "Hyper Rubber Block", "Hyper Rubber", "Ice-Glass Block", "Item Launcher (Packaged)", "Item Net", "Item Shredder", "Ladder", "Launcher Gauntlets", "Loader (Packaged)", "Manifest Scanner", "Metal", "Paint", "Punch Ammo", "Pusher (Packaged)", "RC Turret (Packaged)", "Recycler (Packaged)", "Repair Tool", "Rocket Pack", "ScatterShot Ammo", "Scrap Metal", "Ship Embiggener", "Ship Shield Booster", "Ship Shrinkinator", "Sign (Packaged)", "Silica Crystals", "Slug Ammo", "Sniper Ammo", "Spawn Point (Packaged)", "Speed Skates", "Standard Ammo", "Thruster (Packaged)", "Thruster Fuel", "Trash Ammo", "Turret (Packaged)", "Turret Controller (Basic, Packaged)", "Volleyball", "Walkway", "Wrench", "Yank Ammo", "No Item"];
+
+function autoComplete(sel, options) {
+	const autoCompleter = $("#autoCompleter");
+	sel.on("focus", function(event) {
+		close();
+		const input = $(event.target);
+		input.select();
+		if (input.is(sel)) {
+			show(input, input.val());
+		}
+	});
+	sel.on("blur", function() {
+		if (autoCompleter.find(".option:hover").length < 1) {
+			close();
+		}
+	});
+	sel.on("keydown", function(event) {
+		if (event.which == 40 || event.which == 38) { // down up
+			event.preventDefault();
+			let next;
+			const selected = autoCompleter.find(".option.selected");
+			if (selected.length) {
+				next = (event.which == 40) ? selected.next() : selected.prev();
+			} else {
+				next = (event.which == 40) ? autoCompleter.find(".option").first() : autoCompleter.find(".option").last();
+			}
+			selected.removeClass("selected");
+			if (next.length) {
+				next.addClass("selected");
+				let top = next.offset().top - autoCompleter.offset().top;
+				if ((top + next.outerHeight()) - autoCompleter.outerHeight() > 0) {
+					autoCompleter.scrollTop(autoCompleter.scrollTop() + top);
+				} else if (top < 0) {
+					autoCompleter.scrollTop(top + autoCompleter.scrollTop());
+				}
+			} else {
+				autoCompleter.scrollTop(0);
+			}
+		} else if (event.which == 13 || event.which == 9) { // enter tab
+			const selected = autoCompleter.find(".option.selected");
+			if (selected.length) {
+				autoCompleter.find(".option.selected").click();
+				return;
+			}
+			close();
+		} else if (event.which == 27) { // esc
+			event.preventDefault();
+			close();
+		}
+	});
+	sel.on("input", function(event) {
+		const input = $(event.target);
+		show(input, input.val());
+	});
+	function show(input, filter) {
+		autoCompleter.css({
+			top: input.offset().top + input.outerHeight() - 2,
+			left: input.offset().left,
+			width: input.outerWidth() - 2
+		});
+		autoCompleter.empty().show();
+		autoCompleter.scrollTop(0);
+		options.forEach(optionValue => {
+			if (filter && filter != "") {
+				if (!optionValue.toLowerCase().includes(filter.toLowerCase())) {
+					return;
+				}
+				optionValue = optionValue.replace(new RegExp(String.raw`${filter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "gi"), "<strong>$&</strong>");
+			}
+			var option = $(document.createElement("div"));
+			option.addClass("option");
+			option.html(optionValue);
+			autoCompleter.append(option);
+			option.on("click", function() {
+				input.val($(this).text());
+				input[0].dispatchEvent(new Event("input"));
+				close();
+			});
+		});
+	}
+	function close() {
+		autoCompleter.empty().hide();
+	}
+}
+autoComplete($(".itemInput"), itemNamesList);
+/* auto completer end */
+
 const colorPicker = (() => {
 	let selectedInput;
 	const picker = tui.colorPicker.create({
@@ -255,7 +344,7 @@ const savedOutfits = (() => {
 							showInfo("No Dredark game in the current browser tab", "error", 3000);
 							return;
 						} else if (!response.isInGame) {
-							showInfo("Outfit successfully changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5500);
+							showInfo("Outfit changed, but because you aren't in a ship, you need to refresh the page to apply it", "warning", 5500);
 							return;
 						}
 						showInfo("Outfit successfully changed", "success", 2000);
@@ -400,7 +489,6 @@ $("#autoSetter .signText").on("input", function() {
 
 // = filters =
 // manual hardcoded item list
-const itemNamesList = ["Auto Turret (Packaged)", "Backpack", "Basketball", "Beach Ball", "Block", "Booster Boots", "Booster Fuel (High Grade)", "Booster Fuel (Low Grade)", "Burst Turret (Packaged)", "Cargo Ejector (Packaged)", "Cargo Hatch (Packaged)", "Comms Station (Packaged)", "Construction Gauntlets", "Door (Packaged)", "Expando Box (Basic, Packaged)", "Explosives", "Fabricator (Engineering, Packaged)", "Fabricator (Equipment, Packaged)", "Fabricator (Legacy, Packaged)", "Fabricator (Machine, Packaged)", "Fabricator (Munitions, Packaged)", "Flak Ammo", "Flux Crystals", "Football", "Freeport Anchor", "Golden Basketball", "Golden Item Shredder", "Golden Volleyball", "Handheld Pusher", "Helm (Packaged)", "Hover Pack", "Hyper Rubber Block", "Hyper Rubber", "Ice-Glass Block", "Item Launcher (Packaged)", "Item Net", "Item Shredder", "Ladder", "Launcher Gauntlets", "Loader (Packaged)", "Metal", "Paint", "Punch Ammo", "Pusher (Packaged)", "RC Turret (Packaged)", "Recycler (Packaged)", "Repair Tool", "Rocket Pack", "ScatterShot Ammo", "Scrap Metal", "Ship Embiggener", "Ship Shield Booster", "Ship Shrinkinator", "Sign (Packaged)", "Silica Crystals", "Slug Ammo", "Sniper Ammo", "Spawn Point (Packaged)", "Speed Skates", "Standard Ammo", "Thruster (Packaged)", "Thruster Fuel", "Trash Ammo", "Turret (Packaged)", "Turret Controller (Basic, Packaged)", "Volleyball", "Walkway", "Wrench", "Yank Ammo", "No Item"];
 itemNamesList.forEach(function(name) {
 	$("#itemNamesList").append($("<option>", {
 		text: name
@@ -430,7 +518,7 @@ $("#autoSetter .filters .edit-button").on("click", function() {
 	});
 });
 $("#autoSetter .filters span.sdt-clear").on("click", function() {
-	$(this).prev(".sdt-clearable").val("").trigger("input");
+	$(this).prev(".sdt-clearable").val("").trigger("input").blur();
 });
 
 var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];

@@ -49,8 +49,8 @@
 				</div>
 				<div class="info" style="user-select:inherit;margin-top:5px;float:left;width:105%;margin-left:-2.5%"></div>
 			</fieldset>
-		</div><div id="tab-2" class="tab-content">
-			<datalist id="itemNamesList"></datalist>
+		</div>
+		<div id="tab-2" class="tab-content">
 			<fieldset id="autoSetter">
 				<legend><strong>Auto Setter</strong></legend>
 				<label>Enabled: <input id="autoSetterState" type="checkbox"></label>
@@ -84,9 +84,21 @@
 						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
 						<div id="cargoHatchFiltersSettings" class="settings" style="display: none;">
 							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
+								<li data-slot="0">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="1">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="2">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
 							</ol>
 						</div>
 					</div>
@@ -117,9 +129,21 @@
 						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
 						<div id="loaderFiltersSettings" class="settings" style="display: none;">
 							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
+								<li data-slot="0">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="1">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="2">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
 							</ol>
 						</div>
 					</div>
@@ -150,9 +174,21 @@
 						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
 						<div id="pusherFiltersSettings" class="settings" style="display: none;">
 							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="1"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
-								<li data-slot="2"><input class="filter-state" type="checkbox" checked> <input class="name sdt-clearable" type="text" list="itemNamesList" placeholder="No Item" spellcheck="false"><span class="sdt-clear">&#10006;</span></li>
+								<li data-slot="0">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="1">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
+								<li data-slot="2">
+									<input class="filter-state" type="checkbox" checked>
+									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
+									<span class="sdt-clear">&#10006;</span>
+								</li>
 							</ol>
 						</div>
 					</div>
@@ -186,8 +222,8 @@
 					</label>
 				</fieldset>
 			</fieldset>
-		</fieldset>
 		</div>
+		<div id="autoCompleter" style="display:none"><div class="suggestions"></div></div>
 		<script type="text/javascript" src="lib/tui-color-picker/tui-color-picker.min.js"></script>
 		<link rel="stylesheet" href="lib/tui-color-picker/tui-color-picker.min.css">
 		<script type="text/javascript" src="scripts/popup.js"></script>
