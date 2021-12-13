@@ -1,14 +1,19 @@
 {
   "name": "Simple Dredark Tools (drednot.io)",
-  "version": "1.5.0",
   "description": "A simple extension for some tools on Dredark (drednot.io)",
+  "version": "1.5.0",
   "author": "Blueyescat <blueyescat123@gmail.com>",
   "permissions": ["storage"],
   "options_page": "options.html",
   "web_accessible_resources": [
-    "styles/content.css",
-    "sfx/beep.mp3",
-    "scripts/wshook.js"
+    {
+      "matches": ["*://*.drednot.io/"],
+      "resources": [
+        "styles/content.css",
+        "sfx/beep.mp3",
+        "scripts/wshook.js"
+      ]
+    }
   ],
   "content_scripts": [
     {
@@ -25,17 +30,14 @@
     }
   ],
   "background": {
-    "scripts": ["scripts/background.js"],
-    "persistent": false
+    "service_worker": "background.js"
   },
-  "browser_action": {
-    "default_popup": "popup.html",
+  "action": {
     "default_icon": {
-      "16": "images/dredark-icon.png",
-      "32": "images/dredark-icon.png",
-      "48": "images/dredark-icon.png",
-      "128": "images/dredark-icon.png"
-    }
+      "32": "images/dredark-icon.png"
+    },
+    "default_title": "Click to open options pop-up of Simple Dredark Tools",
+    "default_popup": "popup.html"
   },
   "icons": {
     "16": "images/dredark-icon.png",
@@ -43,5 +45,5 @@
     "48": "images/dredark-icon.png",
     "128": "images/dredark-icon.png"
   },
-  "manifest_version": 2
+  "manifest_version": 3
 }

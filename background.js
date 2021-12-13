@@ -89,12 +89,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		return true;
 	}
 });
-
-/* function sendMessageToContentScripts(message) {
-	var matches = chrome.runtime.getManifest().content_scripts[0].matches;
-	chrome.tabs.query({url: matches}, function(tabs) {
-		tabs.forEach(function(tab) {
-			chrome.tabs.sendMessage(tab.id, message);
-		});
-	});
-} */
