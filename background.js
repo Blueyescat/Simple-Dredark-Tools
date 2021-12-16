@@ -7,7 +7,7 @@ const defaultData = {
 chrome.runtime.onInstalled.addListener(function(details) {
 	// open guide page after installation
 	if (details.reason === "install")
-		chrome.tabs.create({url: chrome.extension.getURL("guide.html")});
+		chrome.tabs.create({url: chrome.runtime.getURL("guide.html")});
 
 	// default data
 	for (const [key, value] of Object.entries(defaultData)) {

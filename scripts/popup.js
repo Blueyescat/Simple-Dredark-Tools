@@ -333,11 +333,11 @@ const savedOutfits = (() => {
 
 	let outfitCooldown;
 	$(".outfit-slot").on("click", function(event) {
+		if ($(event.target).is(".edit-button, .add-button")) return;
 		if (outfitCooldown) {
 			showInfo("You can't change outfit that fast", "error", 2800);
 			return;
 		}
-		if ($(event.target).is(".edit-button, .add-button")) return;
 		const slot = parseInt($(this).attr("data-slot"));
 		chrome.runtime.sendMessage({message: "getSavedOutfit", index: slot}, async function(response) {
 			if (typeof response.outfit === "undefined") return;

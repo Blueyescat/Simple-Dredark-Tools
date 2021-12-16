@@ -263,10 +263,12 @@ function startTipListObserver() {
     tipListObserver.observe(document, { subtree: true, childList: true });
 }
 
-puiObserver.observe(pui[0], {
-    attributes: true,
-    attributeFilter: ["style"]
-});
+if (pui.length) {
+    puiObserver.observe(pui[0], {
+        attributes: true,
+        attributeFilter: ["style"]
+    });
+}
 /* Auto setter end */
 
 /* Chat/MOTD stuff start */
@@ -299,7 +301,7 @@ function setChatHighlighterRegex(texts) {
             options[key] = response.value;
             if (key == "makeChatUrlsClickable" && options.makeChatUrlsClickable)
                 startChatObserver();
-            if (key == "chatHighlighterState" && options.chatHighlighterState)
+            else if (key == "chatHighlighterState" && options.chatHighlighterState)
                 startChatObserver();
             if (key == "chatHighlighterTexts" && options.chatHighlighterTexts)
                 setChatHighlighterRegex();
@@ -388,6 +390,7 @@ function handleNewMessages() {
 
 var chatContentObserver = new MutationObserver(handleNewMessages);
 function startChatObserver() {
+    if (!chatContent.length) return;
     handleNewMessages();
     chatContentObserver.observe(chatContent[0], {childList: true});
 }
@@ -403,6 +406,7 @@ var motdTextObserver = new MutationObserver(function() {
     startMotdObserver();
 });
 function startMotdObserver() {
+    if (!motdText.length) return;
     motdTextObserver.observe(motdText[0], { childList: true });
 }
 $("#motd-text, #chat").on("focus", "a", function() {
