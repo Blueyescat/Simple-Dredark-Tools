@@ -18,21 +18,24 @@ let sdtData = {
 
 /* Saved outfits */
 function setInGameOutfit(data, isInGame) {
-    let outfitData = {
+    let currentSettings = { player_appearance: {} };
+    try { currentSettings.player_appearance = JSON.parse(window.localStorage.getItem("dredark_user_settings")).player_appearance; } catch {}
+    let appearanceSetting = Object.assign(currentSettings.player_appearance, {
         "color_body": hexColorToInt(data[3]),
+        "color_feet": hexColorToInt(data[5]),
         "color_legs": hexColorToInt(data[4]),
         "color_hair": hexColorToInt(data[1]),
         "color_skin": hexColorToInt(data[2]),
         "style_hair": parseInt(data[0])
-    };
+    });
     if (isInGame) {
-        let wsData = {"type": 6, "outfit": outfitData};
+        let wsData = {"type": 6, "outfit": appearanceSetting};
         window.postMessage({message: "sdt-sendToWs", wsData: msgpack.encode(wsData)}, window.location.origin);
     } else {
         let settings;
         try { settings = JSON.parse(window.localStorage.getItem("dredark_user_settings")); }
         catch { settings = {} };
-        settings["player_appearance"] = outfitData;
+        settings["player_appearance"] = appearanceSetting;
         window.localStorage.setItem("dredark_user_settings", JSON.stringify(settings));
     }
 }
@@ -483,14 +486,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         let settings;
         try { settings = JSON.parse(window.localStorage.getItem("dredark_user_settings")); } catch {}
         if (settings) {
-            const aS = settings["player_appearance"];
+            const aS = settings.player_appearance;
             if (aS) {
                 const hairStyle = parseInt(aS.style_hair),
                     hairColor = intToHexColor(aS.color_hair),
                     skinColor = intToHexColor(aS.color_skin),
                     bodyColor = intToHexColor(aS.color_body),
-                    legsColor = intToHexColor(aS.color_legs);
-                data = [hairStyle, hairColor, skinColor, bodyColor, legsColor];
+                    legsColor = intToHexColor(aS.color_legs),
+                    feetColor = intToHexColor(aS.color_feet);
+                data = [hairStyle, hairColor, skinColor, bodyColor, legsColor, feetColor];
             }
         }
         sendResponse({outfit: data});

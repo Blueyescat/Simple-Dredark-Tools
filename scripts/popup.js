@@ -195,8 +195,8 @@ const savedOutfits = (() => {
 		{file: "face", colorSource: "", x: 0, y: -2},
 		{file: "arm", colorSource: "body", x: 21.5, y: -8},
 		{file: "hand", colorSource: "skin", x: 21.5, y: -8},
-		{file: "foot", colorSource: "", x: 17.5, y: 5.5},
-		{file: "foot", colorSource: "", x: 21.5, y: 5.5}
+		{file: "foot", colorSource: "feet", x: 17.5, y: 5.5},
+		{file: "foot", colorSource: "feet", x: 21.5, y: 5.5}
 	];
 
 	let characterImages = {};
@@ -273,7 +273,7 @@ const savedOutfits = (() => {
 			chrome.runtime.sendMessage({message: "getSavedOutfit", index: i}, function(response) {
 				if (typeof response.outfit !== "undefined") {
 					let data = response.outfit.split("||");
-					updatePreview($(`.outfit-slot[data-slot='${i}'] .preview canvas`), data[0], data[1], data[2], data[3], data[4]);
+					updatePreview($(`.outfit-slot[data-slot='${i}'] .preview canvas`), data[0], data[1], data[2], data[3], data[4], data[5]);
 				} else {
 					toggleAddButton($(`.outfit-slot[data-slot='${i}']`), true);
 				}
@@ -281,14 +281,15 @@ const savedOutfits = (() => {
 		}
 	})();
 
-	function updatePreview(selector, hairStyle, hairColor, skinColor, bodyColor, legsColor) {
+	function updatePreview(selector, hairStyle, hairColor, skinColor, bodyColor, legsColor, feetColor) {
 		let options = {
 			hairStyle: hairStyle,
 			colors: {
 				hair: hairColor,
 				skin: skinColor,
 				body: bodyColor,
-				legs: legsColor
+				legs: legsColor,
+				feet: feetColor
 			}
 		};
 		selector.each(function() {
@@ -310,7 +311,7 @@ const savedOutfits = (() => {
 			if (typeof response.outfit !== "undefined")
 				data = response.outfit;
 			else
-				data = "0||#111111||#c99b86||#47a53b||#154479";
+				data = "0||#111111||#c99b86||#47a53b||#154479||#5f3f11";
 			data = data.split("||");
 			loadOutfitToInputs(data);
 		});
@@ -327,7 +328,8 @@ const savedOutfits = (() => {
 		inputs.find(".skin-color").attr("value", data[2]);
 		inputs.find(".body-color").attr("value", data[3]);
 		inputs.find(".legs-color").attr("value", data[4]);
-		updatePreview($(`#editOutfit .preview canvas`), data[0], data[1], data[2], data[3], data[4]);
+		inputs.find(".feet-color").attr("value", data[5]);
+		updatePreview($(`#editOutfit .preview canvas`), data[0], data[1], data[2], data[3], data[4], data[5]);
 		colorLabels();
 	}
 
@@ -409,10 +411,11 @@ const savedOutfits = (() => {
 			hairColor = $("#editOutfit .inputs .hair-color").eq(0).attr("value"),
 			skinColor = $("#editOutfit .inputs .skin-color").eq(0).attr("value"),
 			bodyColor = $("#editOutfit .inputs .body-color").eq(0).attr("value"),
-			legsColor = $("#editOutfit .inputs .legs-color").eq(0).attr("value");
+			legsColor = $("#editOutfit .inputs .legs-color").eq(0).attr("value"),
+			feetColor = $("#editOutfit .inputs .feet-color").eq(0).attr("value");
 		toggleAddButton($(`.outfit-slot[data-slot='${editingOutfit}']`), false);
-		updatePreview($(`.outfit-slot[data-slot='${editingOutfit}'] .preview canvas, #editOutfit .preview canvas`), hairStyle, hairColor, skinColor, bodyColor, legsColor);
-		chrome.runtime.sendMessage({message: "setSavedOutfit", index: editingOutfit, outfit: [hairStyle, hairColor, skinColor, bodyColor, legsColor].join("||")});
+		updatePreview($(`.outfit-slot[data-slot='${editingOutfit}'] .preview canvas, #editOutfit .preview canvas`), hairStyle, hairColor, skinColor, bodyColor, legsColor, feetColor);
+		chrome.runtime.sendMessage({message: "setSavedOutfit", index: editingOutfit, outfit: [hairStyle, hairColor, skinColor, bodyColor, legsColor, feetColor].join("||")});
 	}
 	
 	$("#editOutfit .inputs select, #editOutfit .inputs input").on("change", function() {
