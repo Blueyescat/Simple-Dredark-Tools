@@ -125,7 +125,7 @@ const colorPicker = (() => {
 	let selectedInput;
 	const picker = tui.colorPicker.create({
 		container: document.getElementById("colorPicker"),
-		preset: ["#111111", "#c99b86", "#47a53b", "#154479", "#ffffff", "#000000"],
+		preset: ["#111111", "#c99b86", "#47a53b", "#154479", "#5f3f11", "#ffffff", "#000000"],
 		usageStatistics: false
 	});
 
@@ -289,7 +289,7 @@ const savedOutfits = (() => {
 				skin: skinColor,
 				body: bodyColor,
 				legs: legsColor,
-				feet: feetColor
+				feet: feetColor ?? "#5f3f11"
 			}
 		};
 		selector.each(function() {
