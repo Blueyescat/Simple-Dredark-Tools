@@ -516,7 +516,7 @@ function intToHexColor(number){
 }
 
 function hexColorToInt(hex) {
-    return parseInt(hex.substr(1), 16);
+    return typeof hex === "string" ? parseInt(hex.substring(1), 16) : null;
 }
 
 function sleep(ms) {
