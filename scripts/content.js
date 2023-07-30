@@ -29,7 +29,7 @@ function setInGameOutfit(data, isInGame) {
         "style_hair": parseInt(data[0])
     });
     if (isInGame) {
-        let wsData = {"type": 6, "outfit": appearanceSetting};
+        let wsData = {type: 7, outfit: appearanceSetting};
         window.postMessage({message: "sdt-sendToWs", wsData: msgpack.encode(wsData)}, window.location.origin);
     } else {
         let settings;
@@ -44,17 +44,6 @@ function setInGameOutfit(data, isInGame) {
 /* Auto setter start */
 var autoSetterEnabled, autoSetterHotkey, autoSetterHotkeyDown,
     autoSetterProperties = {
-        cargoHatchMode: -1,
-        cargoHatchFiltersState: -1,
-        cargoHatchFiltersSettings: -1,
-        loaderMode: -1,
-        loaderInvRequirement: -1,
-        loaderFiltersState: -1,
-        loaderFiltersSettings: -1,
-        pusherPrimaryMode: -1,
-        pusherFilteredMode: -1,
-        pusherFiltersState: -1,
-        pusherFiltersSettings: -1,
         signText: -1,
         doorSpawnRestriction: -1
     };
@@ -97,66 +86,7 @@ var puiObserver = new MutationObserver(async function() {
         return;
     if (!pui.is(":hidden")) {
         var close;
-        if (pui.text().includes("Cargo Hatch")) {
-            if (autoSetterProperties.cargoHatchMode != -1) {
-                pui.hide();
-                var select = pui.find("div select").eq(0);
-                select.val(autoSetterProperties.cargoHatchMode);
-                select[0].dispatchEvent(new Event("change"));
-                close = true;
-            }
-            if (autoSetterProperties.cargoHatchFiltersState != -1 && autoSetterProperties.cargoHatchFiltersSettings != -1) {
-                if (!close) pui.hide();
-                var settings = autoSetterProperties.cargoHatchFiltersSettings;
-                var inputs = pui.find("div div > input");
-                await setFilters(inputs, settings);
-                close = true;
-            }
-        } else if (pui.text().includes("Loader")) {
-            if (autoSetterProperties.loaderMode != -1) {
-                pui.hide();
-                var select = pui.find("div select").eq(0);
-                select.val(autoSetterProperties.loaderMode);
-                select[0].dispatchEvent(new Event("change"));
-                close = true;
-            }
-            if (autoSetterProperties.loaderInvRequirement != -1) {
-                if (!close) pui.hide();
-                var checkbox = pui.find("div p label input[type='checkbox']").eq(0);
-                checkbox.prop("checked", autoSetterProperties.loaderInvRequirement == 1)
-                checkbox[0].dispatchEvent(new Event("change"));
-                close = true;
-            }
-            if (autoSetterProperties.loaderFiltersState != -1 && autoSetterProperties.loaderFiltersSettings != -1) {
-                if (!close) pui.hide();
-                var settings = autoSetterProperties.loaderFiltersSettings;
-                var inputs = pui.find("div div > input");
-                await setFilters(inputs, settings);
-                close = true;
-            }
-        } else if (pui.text().includes("Pusher")) {
-            if (autoSetterProperties.pusherPrimaryMode != -1) {
-                pui.hide();
-                var select = pui.find("div select").eq(0);
-                select.val(autoSetterProperties.pusherPrimaryMode);
-                select[0].dispatchEvent(new Event("change"));
-                close = true;
-            }
-            if (autoSetterProperties.pusherFilteredMode != -1) {
-                if (!close) pui.hide();
-                var select = pui.find("div select").eq(1);
-                select.val(autoSetterProperties.pusherFilteredMode);
-                select[0].dispatchEvent(new Event("change"));
-                close = true;
-            }
-            if (autoSetterProperties.pusherFiltersState != -1 && autoSetterProperties.pusherFiltersSettings != -1) {
-                if (!close) pui.hide();
-                var settings = autoSetterProperties.pusherFiltersSettings;
-                var inputs = pui.find("div div > input");
-                await setFilters(inputs, settings);
-                close = true;
-            }
-        } else if (pui.text().includes("Sign")) {
+        if (pui.text().includes("Sign")) {
             var set;
             if (autoSetterProperties.signText != -1) {
                 pui.hide();
@@ -327,6 +257,7 @@ function optionsLoaded() {
 }
 
 // chat
+var chat = $("#chat");
 var chatContent = $("#chat-content");
 function handleNewMessages() {
     if (!options.chatHighlighterState && !options.makeChatUrlsClickable)
@@ -382,8 +313,8 @@ function handleNewMessages() {
                     return $.parseHTML(content);
                 return content;
             });
-            // at least one highlighting was applied
-            if (options.chatHighlighterSoundState && anyHighlight && ($("#chat").hasClass("closed") || !document.hasFocus()))
+            // at least one highlighting was applied - don't play sound if chat open + window focused
+            if (options.chatHighlighterSoundState && anyHighlight && (chat.hasClass("closed") || !document.hasFocus()))
                 sfxBeep.play();
         }
         $(this).attr("data-sdt-handled", true);

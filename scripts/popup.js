@@ -33,7 +33,7 @@ $(document).ready(function() {
 });
 
 /* auto completer start */
-const itemNamesList = ["Auto Turret (Packaged)", "Backpack", "Basketball", "Beach Ball", "Block", "BoM Scanner", "Booster Boots", "Booster Fuel (High Grade)", "Booster Fuel (Low Grade)", "Burst Turret (Packaged)", "Cargo Ejector (Packaged)", "Cargo Hatch (Packaged)", "Comms Station (Packaged)", "Construction Gauntlets", "Door (Packaged)", "Expando Box (Basic, Packaged)", "Explosives", "Fabricator (Engineering, Packaged)", "Fabricator (Equipment, Packaged)", "Fabricator (Legacy, Packaged)", "Fabricator (Machine, Packaged)", "Fabricator (Munitions, Packaged)", "Flak Ammo", "Flux Crystals", "Football", "Freeport Anchor", "Golden Basketball", "Golden Item Shredder", "Golden Volleyball", "Handheld Pusher", "Helm (Packaged)", "Hover Pack", "Hyper Rubber Block", "Hyper Rubber", "Ice-Glass Block", "Item Launcher (Packaged)", "Item Net", "Item Shredder", "Ladder", "Launcher Gauntlets", "Loader (Packaged)", "Manifest Scanner", "Metal", "Paint", "Punch Ammo", "Pusher (Packaged)", "RC Turret (Packaged)", "Recycler (Packaged)", "Repair Tool", "Rocket Pack", "ScatterShot Ammo", "Scrap Metal", "Ship Embiggener", "Ship Shield Booster", "Ship Shrinkinator", "Sign (Packaged)", "Silica Crystals", "Slug Ammo", "Sniper Ammo", "Spawn Point (Packaged)", "Speed Skates", "Standard Ammo", "Thruster (Packaged)", "Thruster Fuel", "Trash Ammo", "Turret (Packaged)", "Turret Controller (Basic, Packaged)", "Volleyball", "Walkway", "Wrench", "Yank Ammo", "No Item"];
+/* const itemNamesList = ["NOT USED"];
 
 function autoComplete(sel, options) {
 	const autoCompleter = $("#autoCompleter");
@@ -118,10 +118,10 @@ function autoComplete(sel, options) {
 		autoCompleter.empty().hide();
 	}
 }
-autoComplete($(".itemInput"), itemNamesList);
+autoComplete($(".itemInput"), itemNamesList); */
 /* auto completer end */
 
-const colorPicker = (() => {
+void function () { // color picker
 	let selectedInput;
 	const picker = tui.colorPicker.create({
 		container: document.getElementById("colorPicker"),
@@ -171,10 +171,10 @@ const colorPicker = (() => {
 		selectedInput.removeClass("focused");
 		selectedInput = undefined;
 	});
-})();
+}();
 
-const savedOutfits = (() => {
-	const slotAmount = 8;
+void function () { // saved outfits
+	const slotAmount = 12;
 	const characterImageFiles = {
 		body: "player.png",
 		arm: "player_arm.png",
@@ -303,6 +303,7 @@ const savedOutfits = (() => {
 
 	let editingOutfit;
 	$(".outfit-slot .edit-button, .outfit-slot .add-button").on("click", function() {
+		const isAdd = $(this).hasClass("add-button")
 		editingOutfit = parseInt($(this).parent().attr("data-slot"));
 		$("#editOutfit .title-slot").text(parseInt(editingOutfit) + 1);
 		$("#outfits").hide();
@@ -314,11 +315,9 @@ const savedOutfits = (() => {
 				data = "0||#111111||#c99b86||#47a53b||#154479||#5f3f11";
 			data = data.split("||");
 			loadOutfitToInputs(data);
+			$("#editOutfit").show();
+			if (isAdd) outfitChanged();
 		});
-		$("#editOutfit").show();
-		if ($(this).hasClass("add-button")) {
-			outfitChanged();
-		}
 	});
 	
 	function loadOutfitToInputs(data) {
@@ -363,7 +362,7 @@ const savedOutfits = (() => {
 						}
 						showInfo("Outfit successfully changed", "success", 2000);
 						outfitCooldown = true;
-						setTimeout(() => outfitCooldown = undefined, 1000);
+						setTimeout(() => outfitCooldown = undefined, 900);
 					});
 				});
 			});
@@ -431,8 +430,7 @@ const savedOutfits = (() => {
 			$(this).css("background-color", $(this).val());
 		});
 	}
-})();
-
+}();
 
 /* auto setter start */
 // == main ==
@@ -482,7 +480,7 @@ $("#autoSetter .hotkey").on("keyup", function (event) {
 });
 
 // == properties ==
-const autoSetterProperties = ["cargoHatchMode", "loaderMode", "loaderInvRequirement", "pusherPrimaryMode", "pusherFilteredMode", "doorSpawnRestriction", "signShowTextMode"];
+const autoSetterProperties = ["doorSpawnRestriction", "signShowTextMode"];
 for (const prop of autoSetterProperties) {
 	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
 		$("#autoSetter ." + prop).val(response.value).change();
@@ -503,7 +501,7 @@ $("#autoSetter .signText").on("input", function() {
 });
 
 // = filters =
-// manual hardcoded item list
+/* // hardcoded item list
 itemNamesList.forEach(function(name) {
 	$("#itemNamesList").append($("<option>", {
 		text: name
@@ -519,7 +517,7 @@ function settingsChanged(prop) {
 		};
 	});
 	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: list});
-}
+} */
 // dropdown
 $("#autoSetter .filters .edit-button").on("click", function() {
 	var button = $(this);
@@ -536,7 +534,7 @@ $("#autoSetter .filters span.sdt-clear").on("click", function() {
 	$(this).prev(".sdt-clearable").val("").trigger("input").blur();
 });
 
-var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];
+/* var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];
 var propertiesSettings = ["cargoHatchFiltersSettings", "loaderFiltersSettings", "pusherFiltersSettings"];
 // show
 for (const [index, prop] of properties.entries()) {
@@ -572,7 +570,7 @@ for (const prop of propertiesSettings) {
 	$("#" + prop + " li .name").on("input", function() {
 		settingsChanged(prop);
 	});
-}
+} */
 
 // utils
 function getKeyCode(event) {

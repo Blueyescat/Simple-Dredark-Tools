@@ -22,7 +22,7 @@
 							<div class="preview"><canvas width="0" height="0"></canvas></div>
 						</div>
 					</div>
-					<i style="display:block;text-align:center">Click on an outfit to apply it to the game character.</i>
+					<span style="display:block;text-align:center">Click on an outfit to apply it to the game character.</span>
 				</div>
 				<div id="editOutfit" style="display:none;margin-bottom:15px">
 					<button class="back-button pointer">&#8592; Back</button>
@@ -56,7 +56,7 @@
 				<legend><strong>Auto Setter</strong></legend>
 				<label>Enabled: <input id="autoSetterState" type="checkbox"></label>
 				<span class="info">
-					<span>How it works?</span>
+					<span>How it works</span>
 					<div class="box">
 						If this is enabled, while pressing the hotkey and clicking a block in game will change its properties as defined here.
 						Signs also support auto setting while placing them.
@@ -67,133 +67,6 @@
 				</span>
 				<br><label class="pointer">Hotkey: <input class="hotkey" type="text" title="Hotkey to hold down for auto setting blocks" readonly></label>
 				<br><br>
-				<fieldset class="cargo-hatch">
-					<legend><strong>Cargo Hatches</strong></legend>
-					<label>
-						Mode
-						<select class="cargoHatchMode" title="Cargo hatch mode">
-							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
-							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Allow All Items (Ignore Filter)</option>
-							<option value="1" style="background: rgb(255, 255, 136); color: black; font-style: normal;">Block Filter Only (Allow by Default)</option>
-							<option value="2" style="background: rgb(255, 204, 136); color: black; font-style: normal;">Allow Filter Only (Block by Default)</option>
-							<option value="3" style="background: rgb(255, 136, 136); color: black; font-style: normal;">Block All Items (Ignore Filter)</option>
-						</select>
-					</label>
-					<div class="filters">
-						<span style="line-height: 20px; font-weight: bold;">Filters</span>
-						<br><label class="pointer">Change: <input id="cargoHatchFiltersState" class="filters-state" type="checkbox"></label>
-						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
-						<div id="cargoHatchFiltersSettings" class="settings" style="display: none;">
-							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="1">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="2">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-							</ol>
-						</div>
-					</div>
-				</fieldset>
-				<fieldset class="loader">
-					<legend><strong>Loaders</strong></legend>
-					<label>
-						Mode
-						<select class="loaderMode" title="Loader mode">
-							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
-							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Allow All Items (Ignore Filter)</option>
-							<option value="1" style="background: rgb(255, 255, 136); color: black; font-style: normal;">Block Filter Only (Allow by Default)</option>
-							<option value="2" style="background: rgb(255, 204, 136); color: black; font-style: normal;">Allow Filter Only (Block by Default)</option>
-							<option value="3" style="background: rgb(255, 136, 136); color: black; font-style: normal;">Block All Items (Ignore Filter)</option>
-						</select>
-					</label>
-					<label>
-						Output inventory requirement
-						<select class="loaderInvRequirement" title="Loader output inventory requirement">
-							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
-							<option value="0" style="background: white; color: black; font-style: normal;">&#9744; Not Required</option>
-							<option value="1" style="background: white; color: black; font-style: normal;">&#9745; Required</option>
-						</select>
-					</label>
-					<div class="filters">
-						<span style="line-height: 20px; font-weight: bold;">Filters</span>
-						<br><label class="pointer">Change: <input id="loaderFiltersState" class="filters-state" type="checkbox"></label>
-						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
-						<div id="loaderFiltersSettings" class="settings" style="display: none;">
-							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="1">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="2">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-							</ol>
-						</div>
-					</div>
-				</fieldset>
-				<fieldset class="pusher">
-					<legend><strong>Pushers</strong></legend>
-					<label>
-						Primary mode
-						<select class="pusherPrimaryMode" style="background: rgb(204, 204, 204);">
-							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
-							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Push</option>
-							<option value="1" style="background: rgb(255, 136, 255); color: black; font-style: normal;">Pull</option>
-							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Do Nothing</option>
-						</select>
-					</label>
-					<label>
-						Filtered mode
-						<select class="pusherFilteredMode" style="background: rgb(204, 204, 204);">
-							<option value="-1" style="background: lightgray; color: gray; font-style: italic;">Do not Change</option>
-							<option value="0" style="background: rgb(136, 255, 136); color: black; font-style: normal;">Push</option>
-							<option value="1" style="background: rgb(255, 136, 255); color: black; font-style: normal;">Pull</option>
-							<option value="2" style="background: rgb(204, 204, 204); color: black; font-style: normal;">Do Nothing</option>
-						</select>
-					</label>
-					<div class="filters">
-						<span style="line-height: 20px; font-weight: bold;">Filters</span>
-						<br><label class="pointer">Change: <input id="pusherFiltersState" class="filters-state" type="checkbox"></label>
-						<button class="edit-button">Edit... &nbsp;<i class="arrow down"></i></button>
-						<div id="pusherFiltersSettings" class="settings" style="display: none;">
-							<ol title="The checkbox defines whether the item should should be changed.&#10;Enter an item name into the text inputs, the name doesn't need to be an exact item name.">
-								<li data-slot="0">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="1">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-								<li data-slot="2">
-									<input class="filter-state" type="checkbox" checked>
-									<input class="name sdt-clearable itemInput" type="text" placeholder="No Item" spellcheck="false">
-									<span class="sdt-clear">&#10006;</span>
-								</li>
-							</ol>
-						</div>
-					</div>
-				</fieldset>
 				<fieldset class="sign">
 					<legend><strong>Signs</strong></legend>
 					<label>
@@ -222,6 +95,7 @@
 						</select>
 					</label>
 				</fieldset>
+				<span style="display:block;text-align:center">Cargo Hatch, Loader and Pusher have been removed, as the game now has its own system for them.</span>
 			</fieldset>
 		</div>
 		<div id="autoCompleter" style="display:none"><div class="suggestions"></div></div>
