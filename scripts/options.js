@@ -1,10 +1,16 @@
 "use strict";
 
 // checkboxes
-var checkboxIds = ["#makeChatUrlsClickable", "#allowInteractingChatUrlsWithoutFocus", "#chatHighlighterState", "#chatHighlighterSoundState",
-        "#makeMotdUrlsClickable"];
+var checkboxIds = [
+    "#hidePopupNotes",
+    "#makeMotdUrlsClickable",
+    "#makeChatUrlsClickable", "#allowInteractingChatUrlsWithoutFocus", "#chatHighlighterState", "#chatHighlighterSoundState"
+];
 $(checkboxIds.join(", ")).change(function() {
-    chrome.storage.sync.set({[$(this).attr("id")]: $(this).prop("checked")});
+    const key = $(this).attr("id")
+    const checked = $(this).prop("checked")
+    const value = key == "hidePopupNotes" ? (checked ? 1 : 0) : checked
+    chrome.storage.sync.set({[key]: value});
 });
 
 // textareas
@@ -31,16 +37,20 @@ $("#previewHighlightSound").click(function() {
 
 function showOptions() {
     chrome.storage.sync.get([
-        "makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus", "chatHighlighterState", "chatHighlighterSoundState", "chatHighlighterTexts",
-        "makeMotdUrlsClickable"
+        "hidePopupNotes",
+        "makeMotdUrlsClickable",
+        "makeChatUrlsClickable", "allowInteractingChatUrlsWithoutFocus", "chatHighlighterState", "chatHighlighterSoundState", "chatHighlighterTexts"
     ], function(data) {
+        console.log(data);
+        $("#hidePopupNotes").prop("checked", data.hidePopupNotes == 1);
+        
+        $("#makeMotdUrlsClickable").prop("checked", data.makeMotdUrlsClickable == true);
+
         $("#makeChatUrlsClickable").prop("checked", data.makeChatUrlsClickable == true);
         $("#allowInteractingChatUrlsWithoutFocus").prop("checked", data.allowInteractingChatUrlsWithoutFocus == true);
         $("#chatHighlighterState").prop("checked", data.chatHighlighterState == true);
         $("#chatHighlighterSoundState").prop("checked", data.chatHighlighterSoundState == true);
         $("#chatHighlighterTexts").val(data.chatHighlighterTexts || "");
-        
-        $("#makeMotdUrlsClickable").prop("checked", data.makeMotdUrlsClickable == true);
     });
   }
 

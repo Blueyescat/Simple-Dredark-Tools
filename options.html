@@ -9,53 +9,48 @@
 	<body>
 		<header>
 			<img width="48" src="images/dredark-icon.png" alt="Extension icon">
-			<h2>Simple Dredark Tools</h2>
+			<h2>Simple Dredark Tools<br><small>Options</small></h2>
 		</header>
 		<section>
-			<fieldset>
-				<legend><h2>MOTD Features</h2></legend>
-				<ul>
-					<li>
-						<label class="pointer">Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
-					</li>
-				</ul>
-			</fieldset>
-			<fieldset>
-				<legend><h2>Chat Features</h2></legend>
-				<ul style="padding-right: 20px;">
-					<li>
-						<label class="pointer">Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
+			<ul style="padding-right: 20px;">
+				<li style="margin-bottom: 0.7em;">
+					<label class="pointer">Hide the notes in the pop-up menu: <input id="hidePopupNotes" type="checkbox"></label>
+				</li>
+				<li style="margin-bottom: 0.7em;">
+					<label class="pointer">Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
+				</li>
+				<li>
+					<label class="pointer">Make URLs in the chat clickable: <input id="makeChatUrlsClickable" type="checkbox" checked></label>
+					<ul>
+						<li>
+							<label class="pointer">Allow interacting with the clickable URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<h3>Chat Highlighter</h3>
+					<label class="pointer">Highlight specific texts in chat: <input id="chatHighlighterState" type="checkbox"></label>
+					<br><label class="pointer">- Play sound: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
+					<label for="chatHighlighterTexts"><h4>Texts to Highlight</h4></label>
+					Every line is a different text to match and highlight. Press Enter for a new line. It only works for user and system messages.
+					<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
+					<details>
+						<summary>Advanced - RegEx</summary>
+						It is possible to use regex by surrounding the line with <b><code>/</code></b>. Use it if you know how.
+						<br>Some useful examples:
 						<ul>
-							<li>
-								<label class="pointer">Allow interacting with the clickable URLs without opening the chat: <input id="allowInteractingChatUrlsWithoutFocus" type="checkbox"></label>
-							</li>
+							<li><b><code>/foo(?! ?bar)/</code></b> - highlight "foo" that doesn't end with "bar" or " bar"</li>
+							<li><b><code>/(?&lt;!baz)foo(?! ?bar)/</code></b> - highlight "foo" that doesn't start with "baz" and doesn't end with "bar" or " bar"</li>
+							<li><b><code>/(?&lt;!baz|quu?x ?|bar)foo/</code></b> - highlight "foo" that doesn't start with "baz", "qux", "qux ", "quux", "quux " or "bar"</li>
 						</ul>
-					</li>
-					<li>
-						<h3>Chat Highlighter</h3>
-						<label class="pointer">Enabled: <input id="chatHighlighterState" type="checkbox"></label>
-						<br><label class="pointer">Play sound when a defined text is mentioned: <input id="chatHighlighterSoundState" type="checkbox"></label> (<span id="previewHighlightSound">preview</span>)
-						<label for="chatHighlighterTexts"><h4>Texts to Highlight</h4></label>
-						Every line is a different text to match and highlight, press ENTER for new line.
-						<br>It should only work for user and system messages.
-						<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
-						<details>
-							<summary>Advanced - RegEx</summary>
-							It is possible to use regex by surrounding the line with <b><code>/</code></b>, use if you know how to.
-							<br>Some useful examples:
-							<ul>
-								<li><b><code>/foo(?! ?bar)/</code></b> - highlight "foo" that doesn't end with "bar" or " bar"</li>
-								<li><b><code>/(?&lt;!baz)foo(?! ?bar)/</code></b> - highlight "foo" that doesn't start with "baz" and doesn't end with "bar" or " bar"</li>
-								<li><b><code>/(?&lt;!baz|quu?x ?|bar)foo/</code></b> - highlight "foo" that doesn't start with "baz", "qux", "qux ", "quux", "quux " or "bar"</li>
-							</ul>
-						</details>						
-					</li>
-				</ul>
-			</fieldset>
-			<small>The options are automatically saved.</small>
+					</details>						
+				</li>
+			</ul>
+			<p><small>The options are automatically saved.</small></p>
 		</section>
 		<footer>
-			v<label id="extensionVersion">x.x.x</label> - Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> - Discord @blueyescat
+			<p style="margin-top: 0;">You may also like <a href="https://dsa.fr.to?sdt" target="_blank">DSA Tools</a>, a website for various tools for the game (e.g. blueprint editing).</p>
+			v<label id="extensionVersion">x.x.x</label> - Made by <a href="https://github.com/Blueyescat" target="_blank">Blueyescat</a> AKA SkySea - Discord @blueyescat
 		</footer>
 		<script type="text/javascript" src="scripts/options.js"></script>
 	</body>

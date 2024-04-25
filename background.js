@@ -2,7 +2,8 @@
 
 const defaultData = {
 	makeChatUrlsClickable: true,
-	makeMotdUrlsClickable: true
+	makeMotdUrlsClickable: true,
+	hidePopupNotes: 0
 };
 chrome.runtime.onInstalled.addListener(function(details) {
 	// open guide page after installation

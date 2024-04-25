@@ -33,7 +33,7 @@ footer {
     padding-bottom: 10px;
     text-align: center;
 }
-footer a {
+a {
     color: unset;
 }
 .pointer { cursor: pointer; }

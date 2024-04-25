@@ -32,95 +32,6 @@ $(document).ready(function() {
 	});
 });
 
-/* auto completer start */
-/* const itemNamesList = ["NOT USED"];
-
-function autoComplete(sel, options) {
-	const autoCompleter = $("#autoCompleter");
-	sel.on("focus", function(event) {
-		close();
-		const input = $(event.target);
-		input.select();
-		if (input.is(sel)) {
-			show(input, input.val());
-		}
-	});
-	sel.on("blur", function() {
-		if (autoCompleter.find(".option:hover").length < 1) {
-			close();
-		}
-	});
-	sel.on("keydown", function(event) {
-		if (event.which == 40 || event.which == 38) { // down up
-			event.preventDefault();
-			let next;
-			const selected = autoCompleter.find(".option.selected");
-			if (selected.length) {
-				next = (event.which == 40) ? selected.next() : selected.prev();
-			} else {
-				next = (event.which == 40) ? autoCompleter.find(".option").first() : autoCompleter.find(".option").last();
-			}
-			selected.removeClass("selected");
-			if (next.length) {
-				next.addClass("selected");
-				let top = next.offset().top - autoCompleter.offset().top;
-				if ((top + next.outerHeight()) - autoCompleter.outerHeight() > 0) {
-					autoCompleter.scrollTop(autoCompleter.scrollTop() + top);
-				} else if (top < 0) {
-					autoCompleter.scrollTop(top + autoCompleter.scrollTop());
-				}
-			} else {
-				autoCompleter.scrollTop(0);
-			}
-		} else if (event.which == 13 || event.which == 9) { // enter tab
-			const selected = autoCompleter.find(".option.selected");
-			if (selected.length) {
-				autoCompleter.find(".option.selected").click();
-				return;
-			}
-			close();
-		} else if (event.which == 27) { // esc
-			event.preventDefault();
-			close();
-		}
-	});
-	sel.on("input", function(event) {
-		const input = $(event.target);
-		show(input, input.val());
-	});
-	function show(input, filter) {
-		autoCompleter.css({
-			top: input.offset().top + input.outerHeight() - 2,
-			left: input.offset().left,
-			width: input.outerWidth() - 2
-		});
-		autoCompleter.empty().show();
-		autoCompleter.scrollTop(0);
-		options.forEach(optionValue => {
-			if (filter && filter != "") {
-				if (!optionValue.toLowerCase().includes(filter.toLowerCase())) {
-					return;
-				}
-				optionValue = optionValue.replace(new RegExp(String.raw`${filter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "gi"), "<strong>$&</strong>");
-			}
-			var option = $(document.createElement("div"));
-			option.addClass("option");
-			option.html(optionValue);
-			autoCompleter.append(option);
-			option.on("click", function() {
-				input.val($(this).text());
-				input[0].dispatchEvent(new Event("input"));
-				close();
-			});
-		});
-	}
-	function close() {
-		autoCompleter.empty().hide();
-	}
-}
-autoComplete($(".itemInput"), itemNamesList); */
-/* auto completer end */
-
 void function () { // color picker
 	let selectedInput;
 	const picker = tui.colorPicker.create({
@@ -500,24 +411,6 @@ $("#autoSetter .signText").on("input", function() {
 	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: "signText", value: $(this).val()});
 });
 
-// = filters =
-/* // hardcoded item list
-itemNamesList.forEach(function(name) {
-	$("#itemNamesList").append($("<option>", {
-		text: name
-	}));
-});
-
-function settingsChanged(prop) {
-	var list = [];
-	$("#" + prop + " li").each(function (index) {
-		list[index] = {
-			state: $(this).find(".filter-state").prop("checked"),
-			name: $(this).find(".name").val()
-		};
-	});
-	chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: list});
-} */
 // dropdown
 $("#autoSetter .filters .edit-button").on("click", function() {
 	var button = $(this);
@@ -533,44 +426,6 @@ $("#autoSetter .filters .edit-button").on("click", function() {
 $("#autoSetter .filters span.sdt-clear").on("click", function() {
 	$(this).prev(".sdt-clearable").val("").trigger("input").blur();
 });
-
-/* var properties = ["cargoHatchFiltersState", "loaderFiltersState", "pusherFiltersState"];
-var propertiesSettings = ["cargoHatchFiltersSettings", "loaderFiltersSettings", "pusherFiltersSettings"];
-// show
-for (const [index, prop] of properties.entries()) {
-	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
-		$("#autoSetter .filters #" + prop).prop("checked", response.value == true);
-	});
-	$("#autoSetter .filters #" + prop).change(function() {
-		chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: prop, value: this.checked});
-		if (this.checked) {
-			chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: propertiesSettings[index]}, function(response) {
-				if (response.value == -1) {
-					var list = [{state: true, name: ""}, {state: true, name: ""}, {state: true, name: ""}];
-					chrome.runtime.sendMessage({message: "setAutoSetterProperty", property: propertiesSettings[index], value: list});
-				}
-			});
-		}
-	});
-}
-// save
-for (const prop of propertiesSettings) {
-	chrome.runtime.sendMessage({message: "getAutoSetterProperty", property: prop}, function(response) {
-		var list = response.value;
-		for (var index in list) {
-			var slot = $("#" + prop + " li[data-slot='" + index + "']");
-			slot.find(".filter-state").prop("checked", list[index].state);
-			slot.find(".name").val(list[index].name);
-		}
-	});
-	
-	$("#" + prop + " li .filter-state").change(function() {
-		settingsChanged(prop);
-	});
-	$("#" + prop + " li .name").on("input", function() {
-		settingsChanged(prop);
-	});
-} */
 
 // utils
 function getKeyCode(event) {
@@ -589,3 +444,9 @@ function unPascalCase(text) {
 	return text.replace(regexUnPascal, "$1 $2");
 }
 /* auto setter end */
+
+/* notes start */
+chrome.runtime.sendMessage({message: "getValueOf", key: "hidePopupNotes"}, function(response) {
+	$("#notes").css("display", response.value == 1 ? "none" : "block");
+});
+/* notes end */
