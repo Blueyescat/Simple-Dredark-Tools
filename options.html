@@ -17,6 +17,13 @@
 					<label class="pointer">Hide the notes in the pop-up menu: <input id="hidePopupNotes" type="checkbox"></label>
 				</li>
 				<li style="margin-bottom: 0.7em;">
+					<label class="pointer">Simplify chat warnings and information: <input id="simplifyMessages" type="checkbox"></label>
+					<br>- The trust warning is removed and added under the crew control menu. Don't enable this if you haven't played for months and know what you are doing. The "You are a captain" message no longer has a guide.
+				</li>
+				<li style="margin-bottom: 0.7em;">
+					<label class="pointer">Cannon fire mode hotkey: <input class="hotkey" id="turretModeHotkey" type="text" readonly></label>
+				</li>
+				<li style="margin-bottom: 0.7em;">
 					<label class="pointer">Make URLs in the MOTD clickable: <input id="makeMotdUrlsClickable" type="checkbox"></label>
 				</li>
 				<li>
@@ -36,7 +43,7 @@
 					<label><textarea id="chatHighlighterTexts" rows="5" wrap="off" placeholder="Type...&#10;Something.." spellcheck="false"></textarea></label>
 					<details>
 						<summary>Advanced - RegEx</summary>
-						It is possible to use regex by surrounding the line with <b><code>/</code></b>. Use it if you know how.
+						It is possible to use regex by surrounding a line with <b><code>/</code></b>. Use it if you know how.
 						<br>Some useful examples:
 						<ul>
 							<li><b><code>/foo(?! ?bar)/</code></b> - highlight "foo" that doesn't end with "bar" or " bar"</li>

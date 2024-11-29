@@ -96,3 +96,6 @@ summary {
 }
 details[open] { padding: 4px; }
 details[open] summary { margin-bottom: 4px; }
+.hotkey {
+    width: 220px;
+}

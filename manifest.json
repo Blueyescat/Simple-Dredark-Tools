@@ -11,7 +11,7 @@
       "resources": [
         "styles/content.css",
         "sfx/beep.mp3",
-        "scripts/wshook.js"
+        "scripts/webpage.js"
       ]
     }
   ],

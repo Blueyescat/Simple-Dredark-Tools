@@ -1,6 +1,6 @@
 "use strict";
 
-var wshook = document.createElement("script");
-wshook.src = chrome.runtime.getURL("scripts/wshook.js");
-wshook.onload = function() { this.remove(); };
-(document.head || document.documentElement).appendChild(wshook);
+var webpage = document.createElement("script");
+webpage.src = chrome.runtime.getURL("scripts/webpage.js");
+webpage.onload = function() { this.remove(); };
+(document.head || document.documentElement).appendChild(webpage);
