@@ -13,7 +13,7 @@ sfxBeep.loop = false;
 var styleAllowInteractingChatAnchors = $("<style>#chat.closed a { pointer-events: auto !important; }</style>");
 var styleCrewControlWarning = $(`<style>#team_players_inner::after {
     content: "Be careful who you trust! Other players may grief, scam, or steal from you. They may act friendly and betray you later. Moderation can't resolve most cases.";
-    color: orange; font-size: .9em; padding: 1em 0.5em; position: absolute; }</style>`);
+    color: orange; font-size: .9em; padding: 1em 0.5em; position: absolute; text-align: center; }</style>`);
 
 let accountInfo = null
 
