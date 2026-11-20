@@ -91,7 +91,7 @@ var puiObserver = new MutationObserver(async function() {
 		if (!dsatoolsLinkAdded && pui.text().includes("Blueprint Scanner")) {
 			const div = pui.find("h2+div");
 			var span = $(/*html*/`<span style="float:right;font-size:0.9em;margin-bottom:4px">
-<img src="https://dsa.fr.to/assets/icons/144.svg" style="width:1.3em;vertical-align:middle;">
+<img src="https://dt.tmp.bz/assets/icons/144.svg" style="width:1.3em;vertical-align:middle;">
 <a style="text-decoration:underline;cursor:pointer;color:#1cb2fd;">Load on Blueprint Editor</a>
 <div class="tooltip dark" style="position:fixed;font-size:1em;width:220px;transform:translate(20px,-25%);">Click to load the blueprint text on DSA Tools - Blueprint Editor, an app by the author of the Simple Dredark Tools extension.</div>
 </span>`);
@@ -100,7 +100,7 @@ var puiObserver = new MutationObserver(async function() {
 				if (str) {
 					if (str.substring(0, 4).toUpperCase() == "DSA:")
 						str = str.substring(4)
-					window.open("https://dsa.fr.to/bpeditor?sdt&load=" + str, "_blank").focus();
+					window.open("https://dt.tmp.bz/bpeditor?sdt&load=" + str, "_blank").focus();
 				}
 			})
 			div.prepend(span);			
